@@ -1,9 +1,11 @@
+import { useSelector } from 'react-redux';
 import '../css/Pagination.css'
 
 import { NavLink, useLocation } from "react-router-dom";
 
 function Pagination() {
     const location = useLocation()
+    const auth = useSelector((state) => state.auth)
 
     const routes = [
         '/personal_details',
@@ -15,6 +17,12 @@ function Pagination() {
         '/mark_details',
         '/additional_details',
     ]
+
+    console.log(auth);
+    
+    if (auth?.role === 'MANAGEMENT') {
+        routes.splice(routes.indexOf('/tnea_details'), 1)
+    }
 
     return (
         routes.includes(location.pathname) &&
