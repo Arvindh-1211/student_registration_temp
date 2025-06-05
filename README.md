@@ -1,5 +1,11 @@
 # student-registrarion
 
+## Run the container
+1. Change the .env file in both frontend and backend
+```
+    docker-compose up -d
+```
+
 ## Frontend
 1. Change the .env file
 

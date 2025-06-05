@@ -10,7 +10,7 @@ import Loading from './Loading';
 import Error from './Error';
 
 function EditUserModal({ userData, isOpen, setIsOpen }) {
-  const { register, handleSubmit } = useForm({ defaultValues: userData });
+  const { register, control, handleSubmit } = useForm({ defaultValues: userData });
   
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -83,7 +83,8 @@ function EditUserModal({ userData, isOpen, setIsOpen }) {
           <DropDown
             label="Role"
             options={['admin', 'manager']}
-            registerProps={register("role")}
+            fieldname={'role'}
+            formcontrol={control}
             storeLabel={true}
           />
           <div className='button-container'>
