@@ -4,12 +4,11 @@ import { store } from "../store/store";
 
 const server = {
     // HOST: '192.168.137.137',
-    HOST: 'localhost',
-    PORT: 8000,
+    HOST: process.env.REACT_APP_API_HOST || 'localhost:800',
 }
 
 const apiInstance = axios.create({
-    baseURL: `http://${server.HOST}:${server.PORT}/api`,
+    baseURL: `${server.HOST}/api`,
 });
 
 apiInstance.interceptors.request.use(

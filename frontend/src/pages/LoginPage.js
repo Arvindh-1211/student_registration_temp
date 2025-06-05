@@ -14,7 +14,7 @@ import Header from '../Components/Header';
 import '../css/Login.css'
 
 function LoginPage() {
-    const clientId = "628644360090-b1l5p2tsfp03gni5cjo0otssfssm5fcq.apps.googleusercontent.com"
+    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID
     const navigate = useNavigate();
     const dispatch = useDispatch()
     const [error, setError] = useState(null)

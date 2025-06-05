@@ -19,7 +19,7 @@ services:
     working_dir: /app
     command: ["sh", "-c", "npm install && node server.js"]
     volumes:
-      - ./server/server.js:/app/server.js
-      - ./server/src:/app/src
-      - ./server/.env:/app/.env
-      - ./server/package.json:/app/package.json
+      - ./backend/server.js:/app/server.js
+      - ./backend/src:/app/src
+      - ./backend/.env:/app/.env
+      - ./backend/package.json:/app/package.json
