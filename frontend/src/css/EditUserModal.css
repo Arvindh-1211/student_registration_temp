@@ -1,0 +1,87 @@
+.modal-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content{
+    min-width: 250px;
+    max-width: 500px;
+    width: fit-content;
+    color: #48246e;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-header{
+    width: 100%;
+    display: flex;
+}
+
+.modal-heading{
+    font-size: 24px;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.modal-close-btn{
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.btn {
+  height: 40px;
+  min-width: 110px;
+  color: #ffffff;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Edit button specific styles */
+.user-edit-btn {
+  background-color: #2ecc71;
+  border-bottom: 2px solid #219653;
+}
+
+.user-edit-btn:hover {
+  background-color: #27ae60;
+}
+
+.user-edit-btn:active {
+  background-color: #219653;
+  box-shadow: none;
+}
+
+/* Delete button specific styles */
+.delete-btn {
+  background-color: #d50000;
+  border-bottom: 2px solid #b71c1c;
+}
+
+.delete-btn:hover {
+  background-color: #c62828;
+}
+
+.delete-btn:active {
+  background-color: #b71c1c;
+  box-shadow: none;
+}

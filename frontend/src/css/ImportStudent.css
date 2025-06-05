@@ -1,0 +1,71 @@
+.file-upload-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+}
+
+.file-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    height: 16rem;
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    background-color: #f9fafb;
+}
+
+.file-upload-label:hover {
+    background-color: #f3f4f6;
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1.25rem;
+    padding-bottom: 1.5rem;
+}
+
+.upload-icon {
+    width: 3rem;
+    height: auto;
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+    color: #6b7280;
+}
+
+.upload-text {
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.upload-text-bold {
+    font-weight: 600;
+}
+
+.upload-text-small {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.excel-file-container{
+    display: flex;
+}
+
+.hidden-input {
+    display: none;
+}
+
+.centre-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

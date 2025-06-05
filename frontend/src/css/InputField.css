@@ -1,0 +1,36 @@
+ .InputField{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inputfield-label {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 4px;
+    text-align: left;
+    width: 18vw;
+    min-width: 240px;
+}
+
+.inputfield-label > .required {
+    color: red;
+}
+
+.inputfield {
+    height: 40px;
+    min-width: 240px;
+    max-width: 19vw;
+    width: 100%;
+    border-style: none;
+    border: 2px solid #9c9c9c;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.inputfield-error {
+    color: #f00;
+    font-size: 14px;
+}

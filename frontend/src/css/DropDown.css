@@ -1,0 +1,161 @@
+.dropDown {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dropdown-label {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 4px;
+    text-align: left;
+    width: 18vw;
+    min-width: 240px;
+}
+
+.dropdown-label>.required {
+    color: red;
+}
+
+.dropdown {
+    text-align: left;
+    height: 40px;
+    min-width: 240px;
+    max-width: 19vw;
+    width: 100%;
+    border-style: none;
+    /* border: 2px solid #9c9c9c; */
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.dropdown-error {
+    color: #f00;
+    font-size: 14px;
+}
+
+.dropdown:hover {
+    cursor: pointer;
+}
+
+/* React-Select specific styles */
+
+/* Main container */
+.dropdown .dropdown__control {
+    background-color: #f5f5f5;
+    border: 2px solid #9c9c9c;
+    border-radius: 4px;
+    min-height: 38px;
+    box-shadow: none;
+    cursor: pointer;
+    margin: 0;
+}
+
+.dropdown .dropdown__control:hover {
+    border-color: #000;
+}
+
+.dropdown .dropdown__control--is-focused {
+    border-color: #000;
+}
+
+/* Value container */
+.dropdown .dropdown__value-container {
+    padding: 8px 12px;
+}
+
+/* Input */
+.dropdown .dropdown__input-container {
+    margin: 0;
+    padding: 0;
+}
+
+/* Placeholder */
+.dropdown .dropdown__placeholder {
+    color: #999;
+}
+
+/* Single value (selected option) */
+.dropdown .dropdown__single-value {
+    color: #333;
+}
+
+/* Dropdown indicator (arrow) */
+.dropdown .dropdown__dropdown-indicator {
+    color: #999;
+    padding: 8px;
+}
+
+.dropdown .dropdown__dropdown-indicator:hover {
+    color: #333;
+}
+
+/* Clear indicator */
+.dropdown .dropdown__clear-indicator {
+    color: #999;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown .dropdown__clear-indicator:hover {
+    color: #333;
+}
+
+/* Remove separator */
+.dropdown .dropdown__indicator-separator {
+    display: none;
+}
+
+/* Menu (dropdown options) */
+.dropdown .dropdown__menu {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+/* Menu list */
+.dropdown .dropdown__menu-list {
+    padding: 0;
+}
+
+/* Options */
+.dropdown .dropdown__option {
+    padding: 10px 12px;
+    cursor: pointer;
+    background-color: white;
+    color: #333;
+}
+
+.dropdown .dropdown__option--is-focused {
+    background-color: #e3f2fd;
+}
+
+.dropdown .dropdown__option--is-selected {
+    background-color: #f5f5f5;
+}
+
+/* No options message */
+.dropdown .dropdown__no-options-message {
+    padding: 10px 12px;
+    color: #999;
+}
+
+/* Loading message */
+.dropdown .dropdown__loading-message {
+    padding: 10px 12px;
+    color: #999;
+}
+
+/* Disabled state */
+.dropdown .dropdown__control--is-disabled {
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    cursor: not-allowed;
+}
+
+.dropdown .dropdown__control--is-disabled .dropdown__single-value {
+    color: #999;
+}
