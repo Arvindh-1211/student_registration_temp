@@ -1,21 +1,31 @@
 version: '3.1'
 
 services:
-  application-portal-web:
+  bitadmissions:
     image: nginx
-    container_name: application-portal-web
-    ports:
-      - 8080:80
+    container_name: bitadmissions.bitsathy.ac.in
+    #ports:
+    #  - 8080:80
     command: ["/usr/sbin/nginx", "-g", "daemon off;"]
     volumes:
       - ./frontend/build:/usr/share/nginx/html
       - ./nginx.conf:/etc/nginx/nginx.conf
 
-  application-portal-server:
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - traefik.enable=true
+
+      - traefik.http.routers.bitadmissions.rule=Host(bitadmissions.bitsathy.ac.in)
+      - traefik.http.routers.bitadmissions.tls=true
+      - traefik.http.routers.bitadmissions.tls.certresolver=lets-encrypt
+      # authenticate all requests before passing it to the backend servers
+      #- traefik.http.routers.bip.middlewares=google-oauth2@file
+
+  bitadmissions.bitsathy.ac.in-server:
     image: node
-    container_name: application-portal-server
+    container_name: bitadmissions.bitsathy.ac.in-server
     ports:
-      - 8000:8000
+      - 9000:9000
     working_dir: /app
     command: ["sh", "-c", "npm install && node server.js"]
     volumes:
