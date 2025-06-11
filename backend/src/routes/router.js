@@ -10,6 +10,11 @@ const router = Router();
 const authController = new AuthController
 const studentRegController = new StudentRegController();
 
+router.route('/test')
+    .get((req, res) => {
+        res.status(200).send("Server is running");
+    });
+
 router.route('/login')
     .post(authController.login)
 
