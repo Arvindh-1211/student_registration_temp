@@ -1,0 +1,26 @@
+version: '3.1'
+
+services:
+  bitadmissions:
+    container_name: bitadmissions.bitsathy.ac.in
+    build:
+      context: .
+      dockerfile: Dockerfile
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bitadmissions.rule=Host(bitadmissions.bitsathy.ac.in)
+      - traefik.http.routers.bitadmissions.tls=true
+      - traefik.http.routers.bitadmissions.tls.certresolver=lets-encrypt
+
+  bitadmissions.bitsathy.ac.in-server:
+    image: node
+    container_name: bitadmissions.bitsathy.ac.in-server
+    ports:
+      - 9000:9000
+    working_dir: /app
+    command: ["sh", "-c", "npm install && node server.js"]
+    volumes:
+      - ./backend/server.js:/app/server.js
+      - ./backend/src:/app/src
+      - ./backend/.env:/app/.env
+      - ./backend/package.json:/app/package.json
