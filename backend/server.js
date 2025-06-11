@@ -7,10 +7,7 @@ const router = require('./src/routes/router');
 const app = express()
 
 // Allow only your frontend's origin
-app.use(cors({
-  origin: configs.CORS_ORIGIN, // or use '*' for development only
-  credentials: true, // if you're sending cookies or auth headers
-}));
+app.use(cors());
 
 app.use(express.json())
 
