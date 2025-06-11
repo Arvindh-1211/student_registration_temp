@@ -5,7 +5,13 @@ const configs = require('./src/config/config');
 const router = require('./src/routes/router');
 
 const app = express()
-app.use(cors())
+
+// Allow only your frontend's origin
+app.use(cors({
+  origin: configs.CORS_ORIGIN, // or use '*' for development only
+  credentials: true, // if you're sending cookies or auth headers
+}));
+
 app.use(express.json())
 
 app.use('/api',router)

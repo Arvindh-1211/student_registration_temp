@@ -15,6 +15,7 @@ const campsConfig = {
 
 const configs = {
   PORT: getEnvVar('PORT', 8000),
+  CORS_ORIGIN: getEnvVar('CORS_ORIGIN', '*'), // Use '*' for development, specify your frontend URL in production
   JWT_SECRET: getEnvVar('JWT_SECRET', ''),
   CAMPS: campsConfig,
 }
