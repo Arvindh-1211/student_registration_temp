@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     labels:
       - traefik.enable=true
-      - traefik.http.routers.bitadmissions.rule=Host(bitadmissions.bitsathy.ac.in)
+      - traefik.http.routers.bitadmissions.rule=Host(`bitadmissions.bitsathy.ac.in`)
       - traefik.http.routers.bitadmissions.tls=true
       - traefik.http.routers.bitadmissions.tls.certresolver=lets-encrypt
 
