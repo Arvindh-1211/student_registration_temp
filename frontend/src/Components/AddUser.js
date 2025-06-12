@@ -35,12 +35,11 @@ function AddUser() {
             <form className='form' onSubmit={handleSubmit(onSubmit)}>
                 <div className='form-header'>Add User</div>
                 <div className='form-fields'>
-                    <div className='space-between'>
+                    <div className='add-user-fields'>
                         <InputField
                             label='Email'
                             registerProps={register("email")}
                             type='email'
-                            toUpper={false}
                             required
                         />
                         <DropDown

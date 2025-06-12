@@ -15,7 +15,7 @@ import IncompleteApplication from "../pages/IncompleteApplication";
 
 const routes = [
     {
-        path: '/adminhome',
+        path: '/home',
         element: <ProtectedRoute users={['admin', 'manager']}><AdminHome /></ProtectedRoute>
     },
     {

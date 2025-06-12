@@ -78,7 +78,6 @@ function EditUserModal({ userData, isOpen, setIsOpen }) {
             label='Email'
             registerProps={register("username")}
             type='text'
-            toUpper={false}
           />
           <DropDown
             label="Role"

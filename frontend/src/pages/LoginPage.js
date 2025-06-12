@@ -35,10 +35,14 @@ function LoginPage() {
             data.password = btoa(data.password)
 
             const response = await authServices.login({ ...data, loginType: 'application_number' })
-            if (response.application_no) {
+            if (response?.application_no) {
                 dispatch(setApplicationNo(response.application_no));
                 dispatch(setAuth(response))
                 navigate('/personal_details');
+            }
+            else if (response?.message === 'Application already submitted!') {
+                setIsLoading(false)
+                setError(response.message);
             }
             else {
                 setError("Invalid Credentials!")
@@ -59,18 +63,27 @@ function LoginPage() {
         console.log(decodedPayload);
 
 
-        const response = await authServices.login({ email: decodedPayload.email, loginType: 'google' })
-        if (response) {
-            dispatch(setAuth({ ...response, name: decodedPayload.name }))
-            if (response.role === 'admin' || response.role === 'manager') {
-                navigate('/adminhome')
+        // TODO Check valid domain for email
+        if (decodedPayload.email.endsWith('@bitsathy.ac.in')) {
+            const response = await authServices.login({ email: decodedPayload.email, loginType: 'google' })
+            if (response) {
+                dispatch(setAuth({ ...response, name: decodedPayload.name }))
+                if (response.role === 'admin' || response.role === 'manager') {
+                    setIsLoading(false)
+                    navigate('/home')
+                }
+                else {
+                    setIsLoading(false)
+                    navigate('/')
+                }
             }
             else {
-                navigate('/')
+                setIsLoading(false)
+                setError("Unauthorized User!")
             }
         }
         else {
-            setError("Unauthorized User!")
+            setError("Use @bitsathy.ac.in email!");
         }
         setIsLoading(false)
     }

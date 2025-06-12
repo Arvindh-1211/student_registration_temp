@@ -42,6 +42,11 @@ class AuthController {
                 // Check if user has already registered
                 let sql = `SELECT * FROM pre_student_register WHERE tnea_app_no = '${username}'`
                 let result = await camps.query(sql);
+                
+                // Check if the user has already submitted the application
+                if (result[0][0].application_no) {
+                    return res.status(200).json({ message: "Application already submitted!" });
+                }
 
                 
                 // Insetion of new user in pre_student_register table if the user logins for the first time
@@ -121,6 +126,8 @@ class AuthController {
                     }
                     else {
                         fields.seat_cat = 'MANAGEMENT';
+                        // TODO
+                        fields.quota_id = '42'; // MANAGEMENT
                     }
 
                     try {

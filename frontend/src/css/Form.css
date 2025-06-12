@@ -1,4 +1,4 @@
-.space-between {
+.add-user-fields {
     display: flex;
     justify-content: space-evenly;
     align-items: flex-end;
@@ -89,6 +89,17 @@
 
 /* --- Mobile Responsive Styles --- */
 @media (max-width: 360px) {
+    .add-user-fields {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+    
+    .add-user-fields > .button{
+        margin-top: 20px;
+    }
+
     .form {
         min-width: 320px;
         width: 95vw;

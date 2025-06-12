@@ -92,7 +92,6 @@ function ContactDetails() {
                         label="Student's Email ID"
                         registerProps={register("stu_email_id")}
                         type='text'
-                        toUpper={false}
                         error={errors.stu_email_id && errors.stu_email_id.message}
                         required
                     />
@@ -110,7 +109,6 @@ function ContactDetails() {
                         label="Parent's Email ID"
                         registerProps={register("parent_email_id")}
                         type='text'
-                        toUpper={false}
                         error={errors.parent_email_id && errors.parent_email_id.message}
                     />
                 </Row>

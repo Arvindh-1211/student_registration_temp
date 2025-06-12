@@ -197,11 +197,17 @@ const ScholarshipDetails = Yup.object().shape({
 })
 
 const AdditionalDetails = Yup.object().shape({
-    father_qual: Yup.string(),
+    father_qual: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true),
 
-    mother_qual: Yup.string(),
+    mother_qual: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true),
 
-    sports_int: Yup.string(),
+    sports_int: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true),
 
     first_gr_appno: Yup.string()
         .matches(/^[A-Za-z0-9]*$/, "Invalid Format")
