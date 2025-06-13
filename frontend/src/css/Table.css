@@ -233,6 +233,11 @@
         width: 100%;
     }
 
+    .add-button{
+        min-width: fit-content;
+        padding: 4px 6px 4px 2px;
+    }
+
     .search-input {
         flex-grow: 1;
     }

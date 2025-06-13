@@ -48,6 +48,9 @@ router.route('/student_user_details')
     .get(roleMiddleware(['admin', 'manager']), studentRegController.getStudentUserDetails)
     .post(roleMiddleware(['admin', 'manager']), studentRegController.insertStudentUserDetails)
 
+router.route('/submitted_application')
+    .get(roleMiddleware(['admin', 'manager']), studentRegController.getSubmittedApplication)
+
 router.route('/incomplete_application')
     .get(roleMiddleware(['admin', 'manager']), studentRegController.getIncompleteApplication)
 

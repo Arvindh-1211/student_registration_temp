@@ -10,8 +10,8 @@ import services from '../services/services';
 
 function Detail({ label, value, marks }) {
     return (
-        <div className='detail'>
-            <span className='detail-label'>
+        <div className='modal-detail'>
+            <span className='modal-detail-label'>
                 <div>{label}</div><div>:</div>
             </span>
             {value}

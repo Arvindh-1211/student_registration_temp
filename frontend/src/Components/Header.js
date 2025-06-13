@@ -10,7 +10,7 @@ import { MdHome } from "react-icons/md";
 import { MdModeEditOutline } from "react-icons/md";
 import { useState, useRef, useEffect } from 'react';
 
-import bitlogo from '../assets/bitlogo.svg'
+import bitlogo from '../assets/bitlogo.png'
 import Loading from "../Components/Loading";
 import Error from "../Components/Error";
 import ProtectedComponent from './ProtectedComponent';
@@ -92,6 +92,7 @@ function Header() {
 			{isLoading && <Loading />}
 			{error && <Error message={error} />}
 			<div className='header'>
+				<div></div>
 				<img className='bit-logo' src={bitlogo} alt='Bannari Amman Institute of Technology' />
 				<div className='header-data'>
 					{auth.token &&
@@ -133,9 +134,9 @@ function Header() {
 							</button>
 						</div>
 					)}
-					{applicationNo &&
+					{/* {applicationNo &&
 						<div className='application-no'>Application No Temp : {applicationNo}</div>
-					}
+					} */}
 				</div>
 			</div>
 			<hr></hr>

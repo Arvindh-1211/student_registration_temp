@@ -18,8 +18,6 @@ function Pagination() {
         '/additional_details',
     ]
 
-    console.log(auth);
-    
     if (auth?.role === 'MANAGEMENT') {
         routes.splice(routes.indexOf('/tnea_details'), 1)
     }

@@ -60,10 +60,7 @@ function LoginPage() {
         const base64Url = credentialResponse.credential.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         const decodedPayload = JSON.parse(atob(base64));
-        console.log(decodedPayload);
 
-
-        // TODO Check valid domain for email
         if (decodedPayload.email.endsWith('@bitsathy.ac.in')) {
             const response = await authServices.login({ email: decodedPayload.email, loginType: 'google' })
             if (response) {

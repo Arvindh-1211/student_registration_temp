@@ -157,11 +157,18 @@ function AdditionalDetails() {
                         type="text"
                         error={errors.first_gr_appno && errors.first_gr_appno.message}
                     />
-                    <InputField
+                    {/* <InputField
                         label="How did you choose this college?"
                         registerProps={register("choose_college")}
                         type="text"
                         error={errors.choose_college && errors.choose_college.message}
+                    /> */}
+                    <DropDown
+                        label="How did you choose this college?"
+                        options={{ "Friends and Relatives":"Friends and Relatives", "Sibling":"Sibling", "Newspaper":"Newspaper", "BIT Alumini":"BIT Alumini", "Social Media":"Social Media", "I did my own research":"I did my own research"}}
+                        fieldname={"choose_college"}
+                        formcontrol={control}
+                        sorted={false}
                     />
                 </Row>
             </Form>

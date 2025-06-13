@@ -76,7 +76,7 @@ function EditUserModal({ userData, isOpen, setIsOpen }) {
         <form onSubmit={handleSubmit(onEdit)}>
           <InputField
             label='Email'
-            registerProps={register("username")}
+            registerProps={register("email")}
             type='text'
           />
           <DropDown

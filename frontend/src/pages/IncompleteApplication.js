@@ -7,6 +7,7 @@ import Loading from '../Components/Loading'
 import Error from '../Components/Error'
 
 function IncompleteApplication() {
+    const [submiitedApplications, setSubmittedApplications] = useState([])
     const [incompleteApplications, setIncompleteApplications] = useState([])
     const [isEditApplicationModalOpen, setIsEditApplicationModalOpen] = useState(false)
     const [applicationData, setApplicationData] = useState(null)
@@ -19,11 +20,13 @@ function IncompleteApplication() {
             setIsLoading(true)
             setError(null)
             try {
-                const response = await services.getIncompleteApplications()
-                
-                setIncompleteApplications(response)
+                const inc_apl = await services.getIncompleteApplications()
+                setIncompleteApplications(inc_apl)
+
+                const sub_apl = await services.getSubmittedApplications()
+                setSubmittedApplications(sub_apl)
             } catch (error) {
-                setError("Failed to fetch incomplete applications!")
+                setError("Failed to fetch applications!")
             } finally {
                 setIsLoading(false)
             }
@@ -55,6 +58,11 @@ function IncompleteApplication() {
                     setIsOpen={setIsEditApplicationModalOpen}
                 />
             )}
+
+            <Table
+                tableData={submiitedApplications}
+                title={'Submitted Applications'}
+            />
 
         </div>
     )

@@ -110,7 +110,7 @@
     /* fallback to Tailwind's gray-100 */
 }
 
-@media (max-width: 360px) {
+@media (max-width: 480px) {
     .bit-logo {
         width: 300px;
         height: 70px;

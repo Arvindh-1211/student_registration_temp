@@ -24,14 +24,14 @@ class AuthController {
                 const user = result[0][0];
 
                 const token = jwt.sign(
-                    { user_id: user.id, username: user.username, role: user.role },
+                    { user_id: user.user_id, username: user.username, role: user.role },
                     JWT_SECRET,
                     { expiresIn: '7d' }
                 );
 
                 const decoded = jwt.verify(token, JWT_SECRET)
 
-                res.json({ token: token, user_id: user.id, username: user.username, role: user.role, exp: decoded.exp });
+                res.json({ token: token, user_id: user.user_id, username: user.username, role: user.role, exp: decoded.exp });
             }
 
             else if (loginType === 'application_number') {
@@ -42,13 +42,13 @@ class AuthController {
                 // Check if user has already registered
                 let sql = `SELECT * FROM pre_student_register WHERE tnea_app_no = '${username}'`
                 let result = await camps.query(sql);
-                
+
                 // Check if the user has already submitted the application
-                if (result[0][0].application_no) {
+                if (result?.[0]?.[0]?.application_no) {
                     return res.status(200).json({ message: "Application already submitted!" });
                 }
 
-                
+
                 // Insetion of new user in pre_student_register table if the user logins for the first time
                 if (result[0].length === 0) {
                     sql = `SELECT * FROM registration_user_details WHERE application_id = '${username}' AND mobile = '${atob(password)}'`
@@ -58,20 +58,20 @@ class AuthController {
                     if (!row) {
                         return res.status(400).json({ message: "Invalid Credentials" });
                     }
-                    
-                    
-                    let admissionType,  admissionQuota
-                    if(username[0] === 'G'){
+
+
+                    let admissionType, admissionQuota
+                    if (username[0] === 'G') {
                         admissionQuota = 'GOVERNMENT'
                     }
                     else if (username[0] === 'M') {
                         admissionQuota = 'MANAGEMENT'
                     }
-                    else{
+                    else {
                         return res.status(400).json({ message: "Invalid Credentials" });
                     }
 
-                    if(username[1] == 'L'){
+                    if (username[1] == 'L') {
                         admissionType = 'LATERAL'
                     }
                     else {
@@ -80,39 +80,191 @@ class AuthController {
 
                     // Insert the row into the database
                     let fields = {
-                        tnea_app_no: row.application_id,
-                        gender: row.gender,
-                        stu_mobile_no: row.mobile,
-                        stu_email_id: row.email,
-                        seat_cat: '',
+                        // "sno": "",
+                        // "application_no": "",
+                        // "app_date": "",
+                        // "legend": "",
+                        // "student_name": "",
+                        // "initial": "",
 
-                        // First graduate details
-                        // adm_sch_name_1: row.first_graduate === 'Yes' ? 'FIRST GRADUATE.' : '',
-                        // adm_sch_amt_1:  row.first_graduate === 'Yes' ? '25000' : '',
+                        "gender": row.gender,
 
-                        // To be formatted
-                        student_name: '',
-                        initial: '',
+                        // "dob": "",
+                        // "father_name": "",
+                        // "mother_name": "",
+                        // "guardian_name": "",
+                        // "mother_tongue": "",
+                        // "blood_group": "",
+                        // "parent_income": "",
+                        // "occupation": "",
+                        // "work_area": "",
+                        // "designation": "",
+                        // "parent_income_mother": "",
+                        // "occupation_mother": "",
+                        // "work_area_mother": "",
+                        // "designation_mother": "",
 
-                        // To be fetched from master tables
-                        branch_id: '',
-                        community_id: '',
+                        "section": "A",
 
-                        batch_id: '',
-                        acad_yr_id: '',
-                        course_id: '',
-                        dept_id: '',
-                        branch_type: '',
-                        degree_level: '',
-                        year_of_admission: '',
-                        year_of_completion: '',
-                        regulation_id: '',
-                        university_id: '5',
-                        student_cat_id: '',
-                        year_of_study: '',
-                        sem_of_study: '',
-                        section: 'A',
+                        // "age": "",
+                        // "community_id": "",
+                        // "caste_id": "",
+                        // "religion_id": "",
+                        // "nationality_id": "",
+                        // "batch_id": "",
+                        // "acad_yr_id": "",
+                        // "branch_id": "",
+                        // "course_id": "",
+                        // "dept_id": "",
+                        // "branch_type": "",
+                        // "degree_level": "",
+                        // "year_of_admission": "",
+                        // "year_of_completion": "",
+                        // "regulation_id": "",
+
+                        "university_id": "5",
+                        
+                        // "student_cat_id": "",
+                        // "year_of_study": "",
+                        // "sem_of_study": "",
+                        // "seat_cat": "",
+                        // "quota_id": "",
+                        // "perm_add_street": "",
+                        // "perm_add_town": "",
+                        // "perm_add_city": "",
+                        // "perm_add_district": "",
+                        // "perm_add_pincode": "",
+                        // "perm_add_state": "",
+                        // "perm_add_country": "",
+                        // "comm_add_street": "",
+                        // "comm_add_town": "",
+                        // "comm_add_city": "",
+                        // "comm_add_district": "",
+                        // "comm_add_pincode": "",
+                        // "comm_add_state": "",
+                        // "comm_add_country": "",
+                        // "parent_mobile_no": "",
+                        // "perm_phone_no": "",
+                        // "parent_email_id": "",
+
+                        "stu_mobile_no": row.mobile,
+                        
+                        // "comm_phone_no": "",
+                        
+                        "stu_email_id": row.email,
+                        
+                        // "scholar": "",
+                        // "nominee_name": "",
+                        // "nominee_relation": "",
+                        // "nominee_age": "",
+                        // "area_location": "",
+                        // "study_medium": "",
+
+                        "tnea_app_no": row.application_id,
+
+                        // "tnea_adm_no": "",
+                        // "general_rank": "",
+                        // "comm_rank": "",
+                        // "tnea_pay_rec_no": "",
+                        // "tnea_pay_rec_date": "",
+                        // "tnea_pay_rec_amt": "",
+                        // "tnea_pay_bank": "",
+                        // "adm_sch_name1": "",
+                        // "adm_sch_name2": "",
+                        // "adm_sch_amt1": "",
+                        // "adm_sch_amt2": "",
+
+                        "physics_secured": "0",
+                        "physics_max": "0",
+                        "physics_percentage": "0",
+                        "chemistry_secured": "0",
+                        "chemistry_max": "0",
+                        "chemistry_percentage": "0",
+                        "maths_secured": "0",
+                        "maths_max": "0",
+                        "maths_percentage": "0",
+                        "biology_secured": "0",
+                        "biology_max": "0",
+                        "biology_percentage": "0",
+                        "cs_secured": "0",
+                        "cs_max": "0",
+                        "cs_percentage": "0",
+                        "entrance_secured": "0",
+                        "entrance_max": "0",
+                        "entrance_percenteage": "0",
+                        "diploma_first_sec": "0",
+                        "diploma_first_max": "0",
+                        "diploma_first_per": "0",
+                        "diploma_second_sec": "0",
+                        "diploma_second_max": "0",
+                        "diploma_second_per": "0",
+                        "diploma_third_sec": "0",
+                        "diploma_third_max": "0",
+                        "diploma_third_per": "0",
+                        "diploma_fourth_sec": "0",
+                        "diploma_fourth_max": "0",
+                        "diploma_fourth_per": "0",
+                        "diploma_fifth_sec": "0",
+                        "diploma_fifth_max": "0",
+                        "diploma_fifth_per": "0",
+                        "diploma_sixth_sec": "0",
+                        "diploma_sixth_max": "0",
+                        "diploma_sixth_per": "0",
+                        "diploma_seventh_sec": "0",
+                        "diploma_seventh_max": "0",
+                        "diploma_seventh_per": "0",
+                        "diploma_eighth_sec": "0",
+                        "diploma_eighth_max": "0",
+                        "diploma_eighth_per": "0",
+                        "diploma_ninenth_sec": "0",
+                        "diploma_ninenth_max": "0",
+                        "diploma_ninenth_per": "0",
+                        "diploma_tenth_sec": "0",
+                        "diploma_tenth_max": "0",
+                        "diploma_tenth_per": "0",
+                        "ug_mark_sec": "0",
+                        "ug_mark_max": "0",
+                        "ug_mark_per": "0",
+                        "phy_che": "0",
+                        "maths": "0",
+                        "cut_off": "0",
+                        "I_II": "0",
+                        "III_IV": "0",
+                        "V_VI": "0",
+                        "VII_VIII": "0",
+                        "IX_X": "0",
+
+                        // "genrel_note1": "",
+                        // "genrel_note2": "",
+                        // "sch_qual_id": "",
+                        // "sch_yr_pass": "",
+                        // "sch_study_state": "",
+                        // "sch_attempt": "",
+
+                        "pcm_sec": "0",
+                        "pcm_max": "0",
+                        "pcm_per": "0",
+
+                        // "sch_reg1": "",
+                        // "sch_reg2": "",
+                        // "sch_cer1": "",
+                        // "sch_cer2": "",
+
+                        "sch_tot_mark1": "0",
+                        "sch_tot_mark2": "0",
+
+                        // "school_name": "",
+                        // "school_tc_no": "",
+                        // "school_tc_date": "",
+                        // "school_class": "",
+                        // "school_board": "",
+                        // "ent_reg_no": "",
+
+                        "photo": "",
+                        
+                        // "aadhar_no": ""
                     }
+
 
                     if (admissionType == "LATERAL") {
                         fields.student_cat_id = 12;
@@ -126,7 +278,6 @@ class AuthController {
                     }
                     else {
                         fields.seat_cat = 'MANAGEMENT';
-                        // TODO
                         fields.quota_id = '42'; // MANAGEMENT
                     }
 
@@ -227,7 +378,7 @@ class AuthController {
                                 '${Object.values(fields).join("', '")}'
                                 )
                             `
-                            
+
                             const result = await camps.query(sql)
                             const application_no = result[0].insertId
 
@@ -347,9 +498,9 @@ class AuthController {
     editUser = async (req, res) => {
         try {
             const user_id = req.params.id
-            const { username, role } = req.body
+            const { email, role } = req.body
 
-            let sql = `UPDATE registration_user SET username = '${username}', role = '${role}' WHERE user_id = ${user_id}`
+            let sql = `UPDATE registration_user SET username = '${email}', role = '${role}' WHERE user_id = ${user_id}`
 
             await userTable.query(sql)
 

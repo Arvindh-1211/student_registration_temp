@@ -27,9 +27,10 @@ function ImportStudent() {
         e.preventDefault();
         setIsLoading(true)
         setError(null)
-
+        
         if (!file) {
             setError("Please select a file!")
+            setIsLoading(false)
             return
         }
 

@@ -236,70 +236,92 @@ function MarkDetails() {
     const entranceSec = Number(watch('entrance_secured'))
     const entranceMax = Number(watch('entrance_max'))
 
-    const physicsPer = Number(calculatePercentage(physicsSec, physicsMax))
-    setValue('physics_percentage', physicsPer)
+    useEffect(() => {
+        // Calculate and set all derived values here
 
-    const chemistryPer = Number(calculatePercentage(chemistrySec, chemistryMax))
-    setValue('chemistry_percentage', chemistryPer)
+        const physicsPer = Number(calculatePercentage(physicsSec, physicsMax));
+        setValue('physics_percentage', physicsPer);
 
-    const mathsPer = Number(calculatePercentage(mathsSec, mathsMax))
-    setValue('maths_percentage', mathsPer)
+        const chemistryPer = Number(calculatePercentage(chemistrySec, chemistryMax));
+        setValue('chemistry_percentage', chemistryPer);
 
-    setValue('biology_percentage', calculatePercentage(biologySec, biologyMax))
-    setValue('cs_percentage', calculatePercentage(csSec, csMax))
+        const mathsPer = Number(calculatePercentage(mathsSec, mathsMax));
+        setValue('maths_percentage', mathsPer);
 
-    const pcmSec = Number(physicsSec + chemistrySec + mathsSec)
-    setValue('pcm_sec', pcmSec)
+        setValue('biology_percentage', calculatePercentage(biologySec, biologyMax));
+        setValue('cs_percentage', calculatePercentage(csSec, csMax));
 
-    const pcmMax = Number(physicsMax + chemistryMax + mathsMax)
-    setValue('pcm_max', pcmMax)
+        const pcmSec = Number(physicsSec + chemistrySec + mathsSec);
+        setValue('pcm_sec', pcmSec);
 
-    setValue('pcm_per', calculatePercentage(pcmSec, pcmMax))
+        const pcmMax = Number(physicsMax + chemistryMax + mathsMax);
+        setValue('pcm_max', pcmMax);
 
-    const phy_che = Number(calculateAverage(physicsPer, chemistryPer))
-    setValue('phy_che', phy_che)
-    setValue('maths', mathsPer)
-    setValue('cut_off', phy_che+ mathsPer)
+        setValue('pcm_per', calculatePercentage(pcmSec, pcmMax));
 
-    const diplomaFirstPer = Number(calculatePercentage(diplomaFirstSec, diplomaFirstMax))
-    setValue('diploma_first_per', diplomaFirstPer)
+        const phy_che = Number(calculateAverage(physicsPer, chemistryPer));
+        setValue('phy_che', phy_che);
+        setValue('maths', mathsPer);
+        setValue('cut_off', phy_che + mathsPer);
 
-    const diplomaSecondPer = Number(calculatePercentage(diplomaSecondSec, diplomaSecondMax))
-    setValue('diploma_second_per', diplomaSecondPer)
+        const diplomaFirstPer = Number(calculatePercentage(diplomaFirstSec, diplomaFirstMax));
+        setValue('diploma_first_per', diplomaFirstPer);
 
-    const diplomaThirdPer = Number(calculatePercentage(diplomaThirdSec, diplomaThirdMax))
-    setValue('diploma_third_per', diplomaThirdPer)
-    
-    const diplomaFourthPer = Number(calculatePercentage(diplomaFourthSec, diplomaFourthMax))
-    setValue('diploma_fourth_per', diplomaFourthPer)
+        const diplomaSecondPer = Number(calculatePercentage(diplomaSecondSec, diplomaSecondMax));
+        setValue('diploma_second_per', diplomaSecondPer);
 
-    const diplomaFifthPer = Number(calculatePercentage(diplomaFifthSec, diplomaFifthMax))
-    setValue('diploma_fifth_per', diplomaFifthPer)
+        const diplomaThirdPer = Number(calculatePercentage(diplomaThirdSec, diplomaThirdMax));
+        setValue('diploma_third_per', diplomaThirdPer);
 
-    const diplomaSixthPer = Number(calculatePercentage(diplomaSixthSec, diplomaSixthMax))
-    setValue('diploma_sixth_per', diplomaSixthPer)
+        const diplomaFourthPer = Number(calculatePercentage(diplomaFourthSec, diplomaFourthMax));
+        setValue('diploma_fourth_per', diplomaFourthPer);
 
-    const diplomaSeventhPer = Number(calculatePercentage(diplomaSeventhSec, diplomaSeventhMax))
-    setValue('diploma_seventh_per', diplomaSeventhPer)
+        const diplomaFifthPer = Number(calculatePercentage(diplomaFifthSec, diplomaFifthMax));
+        setValue('diploma_fifth_per', diplomaFifthPer);
 
-    const diplomaEighthPer = Number(calculatePercentage(diplomaEighthSec, diplomaEighthMax))
-    setValue('diploma_eighth_per', diplomaEighthPer)
+        const diplomaSixthPer = Number(calculatePercentage(diplomaSixthSec, diplomaSixthMax));
+        setValue('diploma_sixth_per', diplomaSixthPer);
 
-    const diplomaNinthPer = Number(calculatePercentage(diplomaNinthSec, diplomaNinthMax))
-    setValue('diploma_ninenth_per', diplomaNinthPer)
+        const diplomaSeventhPer = Number(calculatePercentage(diplomaSeventhSec, diplomaSeventhMax));
+        setValue('diploma_seventh_per', diplomaSeventhPer);
 
-    const diplomaTenthPer = Number(calculatePercentage(diplomaTenthSec, diplomaTenthMax))
-    setValue('diploma_tenth_per', diplomaTenthPer)
+        const diplomaEighthPer = Number(calculatePercentage(diplomaEighthSec, diplomaEighthMax));
+        setValue('diploma_eighth_per', diplomaEighthPer);
 
-    setValue('ug_mark_per', calculatePercentage(ugMarkSec, ugMarkMax))
+        const diplomaNinthPer = Number(calculatePercentage(diplomaNinthSec, diplomaNinthMax));
+        setValue('diploma_ninenth_per', diplomaNinthPer);
 
-    setValue('I_II', calculateAverage(diplomaFirstPer, diplomaSecondPer))
-    setValue('III_IV', calculateAverage(diplomaThirdPer, diplomaFourthPer))
-    setValue('V_VI', calculateAverage(diplomaFifthPer, diplomaSixthPer))
-    setValue('VII_VIII', calculateAverage(diplomaSeventhPer, diplomaEighthPer))
-    setValue('IX_X', calculateAverage(diplomaNinthPer, diplomaTenthPer))
+        const diplomaTenthPer = Number(calculatePercentage(diplomaTenthSec, diplomaTenthMax));
+        setValue('diploma_tenth_per', diplomaTenthPer);
 
-    setValue('entrance_percenteage', calculatePercentage(entranceSec, entranceMax))
+        setValue('ug_mark_per', calculatePercentage(ugMarkSec, ugMarkMax));
+
+        setValue('I_II', calculateAverage(diplomaFirstPer, diplomaSecondPer));
+        setValue('III_IV', calculateAverage(diplomaThirdPer, diplomaFourthPer));
+        setValue('V_VI', calculateAverage(diplomaFifthPer, diplomaSixthPer));
+        setValue('VII_VIII', calculateAverage(diplomaSeventhPer, diplomaEighthPer));
+        setValue('IX_X', calculateAverage(diplomaNinthPer, diplomaTenthPer));
+
+        setValue('entrance_percenteage', calculatePercentage(entranceSec, entranceMax));
+    }, [
+        physicsSec, physicsMax,
+        chemistrySec, chemistryMax,
+        mathsSec, mathsMax,
+        biologySec, biologyMax,
+        csSec, csMax,
+        diplomaFirstSec, diplomaFirstMax,
+        diplomaSecondSec, diplomaSecondMax,
+        diplomaThirdSec, diplomaThirdMax,
+        diplomaFourthSec, diplomaFourthMax,
+        diplomaFifthSec, diplomaFifthMax,
+        diplomaSixthSec, diplomaSixthMax,
+        diplomaSeventhSec, diplomaSeventhMax,
+        diplomaEighthSec, diplomaEighthMax,
+        diplomaNinthSec, diplomaNinthMax,
+        diplomaTenthSec, diplomaTenthMax,
+        ugMarkSec, ugMarkMax,
+        entranceSec, entranceMax
+    ]);
 
 
     const onSubmit = async (data) => {
@@ -338,7 +360,8 @@ function MarkDetails() {
                         options={options['school_board']}
                         fieldname={"school_board"}
                         formcontrol={control}
-                        sorted={false}
+                        storeLabel={true}
+                        // sorted={false}
                     />
                     <InputField
                         label='School class'
@@ -351,7 +374,7 @@ function MarkDetails() {
                     <InputField
                         label='TC Number'
                         registerProps={register("school_tc_no")}
-                        type='number'
+                        type='text'
                         error={errors.school_tc_no && errors.school_tc_no.message}
                         required
                     />
@@ -389,6 +412,7 @@ function MarkDetails() {
                         label="Medium of Instruction"
                         options={options['study_medium']}
                         fieldname={"study_medium"}
+                        storeLabel={true}
                         formcontrol={control}
                     />
                 </Row>
@@ -408,11 +432,11 @@ function MarkDetails() {
                     <InputField
                         label='Register Number 1'
                         registerProps={register("sch_reg1")}
-                        type='number'
+                        type='text'
                         error={errors.sch_reg1 && errors.sch_reg1.message}
                     />
                     <InputField
-                        label='Certificate Name'
+                        label='Certificate Number'
                         registerProps={register("sch_cer1")}
                         type='text'
                         error={errors.sch_cer1 && errors.sch_cer1.message}
@@ -428,11 +452,11 @@ function MarkDetails() {
                     <InputField
                         label='Register Number 2'
                         registerProps={register("sch_reg2")}
-                        type='number'
+                        type='text'
                         error={errors.sch_reg2 && errors.sch_reg2.message}
                     />
                     <InputField
-                        label='Certificate Name'
+                        label='Certificate Number'
                         registerProps={register("sch_cer2")}
                         type='text'
                         error={errors.sch_cer2 && errors.sch_cer2.message}

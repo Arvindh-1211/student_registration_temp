@@ -22,6 +22,10 @@ const routes = [
         path: '/',
         element: <BranchDetails />
     },
+    // {
+    //     path: '/',
+    //     element: <BranchDetails />
+    // },
     {
         path: '/incomplete_application',
         element: <ProtectedRoute users={['admin', 'manager']}><IncompleteApplication /></ProtectedRoute>

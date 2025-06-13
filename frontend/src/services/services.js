@@ -135,6 +135,16 @@ const deleteUser = async (id) => {
     }
 }
 
+const getSubmittedApplications = async () => {
+    try {
+        const response = await apiInstance.get(`/submitted_application`)
+        return response.data
+    } catch (error) {
+        console.log("Cannot fetch submitted applications")
+        throw error
+    }
+}
+
 const getIncompleteApplications = async () => {
     try {
         const response = await apiInstance.get(`/incomplete_application`)
@@ -169,6 +179,7 @@ const services = {
     getUserDetails,
     editUser,
     deleteUser,
+    getSubmittedApplications,
     getIncompleteApplications,
     deleteApplication
 };

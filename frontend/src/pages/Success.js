@@ -37,9 +37,9 @@ function Success() {
                     <div className='success-msg'>Success!</div>
                     {/* <div>Application submitted successfully.</div> */}
                     <div className='appl-no'>Application Number : {campsApplNo}</div>
-                    <div>Application Number Temp : {applicationNo}</div>
+                    {/* <div>Application Number Temp : {applicationNo}</div> */}
                     <div className='button-container'>
-                        <button className='create-btn' onClick={handleClick}>Create another</button>
+                        <button className='create-btn' onClick={handleClick}>Okay</button>
                     </div>
                 </div>
             </div>

@@ -222,12 +222,14 @@ const MarkDetails = Yup.object().shape({
 
     school_tc_no: Yup.string()
         .matches(/^[A-Za-z0-9-]+$/, "Invalid TC number")
+        .transform((value, originalValue) => originalValue === '' ? null : value)
         .required("TC number is required"),
 
     school_tc_date: Yup.string()
         .required("TC date is required"),
 
     sch_attempt: Yup.number()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
         .required("No. of attempts is required"),
 
     sch_reg1: Yup.string()
