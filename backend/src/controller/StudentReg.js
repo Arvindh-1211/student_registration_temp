@@ -399,7 +399,7 @@ class StudentRegController {
             let student_additional_det = await camps.query(sql)
             student_additional_det = student_additional_det[0][0]
             student_additional_det['appl_no'] = APPLICATION_NO
-            delete student_additional_det['enroll_no']
+            student_additional_det['enroll_no'] = '0'
 
             fields = Object.keys(student_additional_det).join(', ')
             values = Object.values(student_additional_det).map(value => {
@@ -413,7 +413,14 @@ class StudentRegController {
 
             sql = `INSERT INTO student_additional_det (${fields}) VALUES (${values})`
             result = await camps.query(sql)
-            // result = await db.query(sql)
+            
+            // Insert into student_produced_certificates_reg table
+            sql = `INSERT INTO student_produced_certificates_reg (application_no) VALUES (${APPLICATION_NO})`
+            result = await camps.query(sql)
+
+            // Insert into student_notproduced_certificates_reg table
+            sql = `INSERT INTO student_notproduced_certificates_reg (application_no) VALUES (${APPLICATION_NO})`
+            result = await camps.query(sql)
 
             // Updating application number in student_register and student_additional_det
             sql = `UPDATE pre_student_register SET application_no = ${APPLICATION_NO} WHERE sno = ${applicationNo}`
