@@ -96,10 +96,10 @@ function Header() {
 				<div className='header-data-container'>
 					{window.innerWidth > 480 &&
 						<ProtectedComponent users={["admin", "manager"]}>
-							<div onClick={() => { navigate('/home'); toggleDropdown(); }} className='header-dropdown-menu-link'>
+							<div onClick={() => { navigate('/home')}} className='header-dropdown-menu-link'>
 								Home
 							</div>
-							<div onClick={() => { navigate('/incomplete_application'); toggleDropdown(); }} className='header-dropdown-menu-link'>
+							<div onClick={() => { navigate('/incomplete_application')}} className='header-dropdown-menu-link'>
 								Applications
 							</div>
 						</ProtectedComponent>

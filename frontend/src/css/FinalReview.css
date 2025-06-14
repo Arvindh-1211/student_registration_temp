@@ -1,6 +1,7 @@
 .detail {
     display: flex;
     min-width: 380px;
+
 }
 
 .detail-label {
@@ -23,9 +24,9 @@
     justify-content: space-between;
 }
 
-.detail-header > div > .button {
+.detail-header>div>.button {
     height: 35px;
-    width: 80px;    
+    width: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -61,7 +62,7 @@
     margin: 10px 20px;
 }
 
-.submit-btn{
+.submit-btn {
     height: 40px;
     width: 100px;
     color: #ffffff;
@@ -95,7 +96,7 @@
         text-align: center;
     }
 
-    .detail-header > div > .button {
+    .detail-header>div>.button {
         height: 28px;
         width: 57px;
         font-size: 17px;
@@ -115,10 +116,12 @@
     }
 
     .detail {
+        border: 2px solid;
         display: flex;
         min-width: unset;
-        width: 200px;
-        align-items:flex-start;
+        width: 100%;
+        overflow-wrap: anywhere;
+        align-items: flex-start;
     }
 
     .detail-row {
