@@ -415,11 +415,11 @@ class StudentRegController {
             result = await camps.query(sql)
             
             // Insert into student_produced_certificates_reg table
-            sql = `INSERT INTO student_produced_certificates_reg (application_no) VALUES (${APPLICATION_NO})`
+            sql = `INSERT INTO student_produced_certificates_reg (application_no, other_certificates) VALUES (${APPLICATION_NO}, '')`
             result = await camps.query(sql)
 
             // Insert into student_notproduced_certificates_reg table
-            sql = `INSERT INTO student_notproduced_certificates_reg (application_no, enrollment_no) VALUES (${APPLICATION_NO}, 'null')`
+            sql = `INSERT INTO student_notproduced_certificates_reg (application_no, enrollment_no, other_certificates) VALUES (${APPLICATION_NO}, 'null', '')`
             result = await camps.query(sql)
 
             // Updating application number in student_register and student_additional_det

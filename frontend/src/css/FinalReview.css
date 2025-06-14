@@ -116,7 +116,6 @@
     }
 
     .detail {
-        border: 2px solid;
         display: flex;
         min-width: unset;
         width: 100%;
