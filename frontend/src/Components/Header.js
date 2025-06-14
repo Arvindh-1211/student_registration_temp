@@ -10,7 +10,7 @@ import { MdHome } from "react-icons/md";
 import { MdModeEditOutline } from "react-icons/md";
 import { useState, useRef, useEffect } from 'react';
 
-import bitlogo from '../assets/bitlogo.png'
+import bitlogo from '../assets/bitlogo.svg'
 import Loading from "../Components/Loading";
 import Error from "../Components/Error";
 import ProtectedComponent from './ProtectedComponent';
@@ -92,54 +92,66 @@ function Header() {
 			{isLoading && <Loading />}
 			{error && <Error message={error} />}
 			<div className='header'>
-				<div></div>
 				<img className='bit-logo' src={bitlogo} alt='Bannari Amman Institute of Technology' />
-				<div className='header-data'>
-					{auth.token &&
-						<div onClick={toggleDropdown} className="header-dropdown-toggle" >
-							<span className="header-dropdown-toggle-icon">
-								{auth?.name?.[0]?.split(' ').map(word => word.charAt(0)).join('').toUpperCase()}
-							</span>
-							<span className='header-username'>{auth?.name}</span>
-						</div>
+				<div className='header-data-container'>
+					{window.innerWidth > 480 &&
+						<ProtectedComponent users={["admin", "manager"]}>
+							<div onClick={() => { navigate('/home'); toggleDropdown(); }} className='header-dropdown-menu-link'>
+								Home
+							</div>
+							<div onClick={() => { navigate('/incomplete_application'); toggleDropdown(); }} className='header-dropdown-menu-link'>
+								Applications
+							</div>
+						</ProtectedComponent>
 					}
+					<div className='header-data'>
+						{auth.token &&
+							<div onClick={toggleDropdown} className="header-dropdown-toggle" >
+								<span className="header-dropdown-toggle-icon">
+									{auth?.name?.[0]?.split(' ').map(word => word.charAt(0)).join('').toUpperCase()}
+								</span>
+								<span className='header-username'>{auth?.name}</span>
+							</div>
+						}
 
-					{isDropdownOpen && (
-						<div ref={dropdownRef} className="header-dropdown-menu">
-							<div className="header-dropdown-username">
-								{auth?.name}
-							</div>
-							<div className="header-dropdown-role">
-								{auth.role.toUpperCase()}
-							</div>
-							<hr></hr>
-							<ProtectedComponent users={["admin", "manager"]}>
-								<div>
-									<button onClick={() => { navigate('/home'); toggleDropdown(); }} className='header-dropdown-menu-btn'>
-										<MdOutlineHome className="header-dropdown-menu-icon" />
-										Home
-									</button>
+						{isDropdownOpen && (
+							<div ref={dropdownRef} className="header-dropdown-menu">
+								<div className="header-dropdown-username">
+									{auth?.name}
 								</div>
-								<div>
-									<button onClick={() => { navigate('/incomplete_application'); toggleDropdown(); }} className='header-dropdown-menu-btn'>
-										<GoPlus className="header-dropdown-menu-icon" />
-										Application
-									</button>
+								<div className="header-dropdown-role">
+									{auth.role.toUpperCase()}
 								</div>
 								<hr></hr>
-							</ProtectedComponent>
-							<button onClick={handleLogout} className='header-dropdown-menu-btn'>
-								<BiLogOut className="header-dropdown-menu-icon" />
-								Logout
-							</button>
-						</div>
-					)}
-					{/* {applicationNo &&
+								{window.innerWidth < 480 &&
+									<ProtectedComponent users={["admin", "manager"]}>
+										<div>
+											<button onClick={() => { navigate('/home'); toggleDropdown(); }} className='header-dropdown-menu-btn'>
+												<MdOutlineHome className="header-dropdown-menu-icon" />
+												Home
+											</button>
+										</div>
+										<div>
+											<button onClick={() => { navigate('/incomplete_application'); toggleDropdown(); }} className='header-dropdown-menu-btn'>
+												<GoPlus className="header-dropdown-menu-icon" />
+												Application
+											</button>
+										</div>
+										<hr></hr>
+									</ProtectedComponent>
+								}
+								<button onClick={handleLogout} className='header-dropdown-menu-btn'>
+									<BiLogOut className="header-dropdown-menu-icon" />
+									Logout
+								</button>
+							</div>
+						)}
+						{/* {applicationNo &&
 						<div className='application-no'>Application No Temp : {applicationNo}</div>
 					} */}
+					</div>
 				</div>
 			</div>
-			<hr></hr>
 		</div>
 	)
 }

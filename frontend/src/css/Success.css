@@ -116,3 +116,30 @@
         opacity: 0;
     }
 }
+
+@media (max-width: 480px) {
+    .success-container {
+        width: 90%;
+        
+        padding: 15px;
+    }
+
+    .success-msg {
+        font-size: 28px;
+    }
+
+    .tick-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+    }
+
+    .appl-no {
+        font-size: 18px;
+    }
+
+    .create-btn {
+        width: 120px;
+        font-size: 14px;
+    }
+}

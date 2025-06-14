@@ -349,6 +349,7 @@ class AuthController {
                             SELECT regulation FROM year_master WHERE id=${year_master_id}
                         `)
                         fields.regulation_id = regulation_id[0][0].regulation
+                        // fields.regulation_id = 24
 
                         // Getting batch_id
                         if (fields.student_cat_id == 11) {

@@ -4,7 +4,7 @@ class StudentRegController {
     getSubmittedApplication = async (req, res) => {
         try {
             const sql = `
-                SELECT psr.sno, psr.student_name, psr.initial, psr.father_name, psr.mother_name, psr.tnea_app_no,
+                SELECT psr.sno, psr.application_no, psr.student_name, psr.initial, psr.father_name, psr.mother_name, psr.tnea_app_no,
                     (SELECT bm.branch_name FROM branch_master bm WHERE bm.branch_id=psr.branch_id) AS branch,
                     (SELECT cm.course_code FROM course_master cm WHERE cm.course_id=psr.course_id) AS course,
                     (SELECT sc.stu_cat FROM student_category sc WHERE sc.stu_cat_id=psr.student_cat_id) AS student_cat
@@ -16,7 +16,7 @@ class StudentRegController {
             res.status(500).send({ error: 'Error fetching incomplete applications', message: error.message });
         }
     }
-    
+
     getIncompleteApplication = async (req, res) => {
         try {
             const sql = `
@@ -71,7 +71,7 @@ class StudentRegController {
                     row = Object.fromEntries(
                         Object.entries(row).filter(([key]) => requiredFields.includes(key))
                     );
-                    if(!(row?.application_id?.[0] === 'M' || row?.application_id?.[0] === 'G')) {
+                    if (!(row?.application_id?.[0] === 'M' || row?.application_id?.[0] === 'G')) {
                         console.log(`Application ID invalid: ${row}`);
                         insertionError.push(`Application ID invalid: Should be prefixed with 'G' or 'M'  application_id: ${row.application_id}`);
                         skippedCount++;
@@ -378,14 +378,16 @@ class StudentRegController {
             student_reg['app_date'] = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')
 
             let fields = Object.keys(student_reg).join(', ')
-            let values = Object.values(student_reg).map(value => {
-                if (typeof value === 'string') {
-                    return `'${value.replace(/'/g, "''")}'`
-                } else if (value === null) {
-                    return 'null'
+            let values = Object.entries(student_reg).map(([key, value]) => {
+                if (key === 'photo') {
+                    return `''`; // force empty string for photo column
+                } else if (value === null || value === undefined || value === '') {
+                    return 'null';
+                } else if (typeof value === 'string') {
+                    return `'${value.replace(/'/g, "''")}'`;
                 }
-                return value
-            }).join(', ')
+                return value;
+            }).join(', ');
 
             sql = `INSERT INTO student_register (${fields}) VALUES (${values})`
             let result = await camps.query(sql)

@@ -30,92 +30,92 @@ function MarkDetails() {
 
         sch_reg1: null,
         sch_cer1: null,
-        sch_tot_mark1: null,
+        sch_tot_mark1: 0,
         sch_reg2: null,
         sch_cer2: null,
-        sch_tot_mark2: null,
+        sch_tot_mark2: 0,
 
-        physics_secured: null,
+        physics_secured: 0,
         physics_max: 100,
-        physics_percentage: null,
+        physics_percentage: 0,
 
-        chemistry_secured: null,
+        chemistry_secured: 0,
         chemistry_max: 100,
-        chemistry_percentage: null,
+        chemistry_percentage: 0,
 
-        maths_secured: null,
+        maths_secured: 0,
         maths_max: 100,
-        maths_percentage: null,
+        maths_percentage: 0,
 
-        biology_secured: null,
+        biology_secured: 0,
         biology_max: 100,
-        biology_percentage: null,
+        biology_percentage: 0,
 
-        cs_secured: null,
+        cs_secured: 0,
         cs_max: 100,
-        cs_percentage: null,
+        cs_percentage: 0,
 
-        pcm_sec: null,
+        pcm_sec: 0,
         pcm_max: 300,
-        pcm_per: null,
+        pcm_per: 0,
 
-        phy_che: null,
-        maths: null,
-        cut_off: null,
+        phy_che: 0,
+        maths: 0,
+        cut_off: 0,
 
-        diploma_first_sec: null,
+        diploma_first_sec: 0,
         diploma_first_max: 100,
-        diploma_first_per: null,
+        diploma_first_per: 0,
 
-        diploma_second_sec: null,
+        diploma_second_sec: 0,
         diploma_second_max: 100,
-        diploma_second_per: null,
+        diploma_second_per: 0,
 
-        diploma_third_sec: null,
+        diploma_third_sec: 0,
         diploma_third_max: 100,
-        diploma_third_per: null,
+        diploma_third_per: 0,
 
-        diploma_fourth_sec: null,
+        diploma_fourth_sec: 0,
         diploma_fourth_max: 100,
-        diploma_fourth_per: null,
+        diploma_fourth_per: 0,
 
-        diploma_fifth_sec: null,
+        diploma_fifth_sec: 0,
         diploma_fifth_max: 100,
-        diploma_fifth_per: null,
+        diploma_fifth_per: 0,
 
-        diploma_sixth_sec: null,
+        diploma_sixth_sec: 0,
         diploma_sixth_max: 100,
-        diploma_sixth_per: null,
+        diploma_sixth_per: 0,
 
-        diploma_seventh_sec: null,
+        diploma_seventh_sec: 0,
         diploma_seventh_max: 100,
-        diploma_seventh_per: null,
+        diploma_seventh_per: 0,
 
-        diploma_eighth_sec: null,
+        diploma_eighth_sec: 0,
         diploma_eighth_max: 100,
-        diploma_eighth_per: null,
+        diploma_eighth_per: 0,
 
-        diploma_ninenth_sec: null,
+        diploma_ninenth_sec: 0,
         diploma_ninenth_max: 100,
-        diploma_ninenth_per: null,
+        diploma_ninenth_per: 0,
 
-        diploma_tenth_sec: null,
+        diploma_tenth_sec: 0,
         diploma_tenth_max: 100,
-        diploma_tenth_per: null,
+        diploma_tenth_per: 0,
 
-        ug_mark_sec: null,
+        ug_mark_sec: 0,
         ug_mark_max: 100,
-        ug_mark_per: null,
+        ug_mark_per: 0,
 
-        I_II: null,
-        III_IV: null,
-        V_VI: null,
-        VII_VIII: null,
-        IX_X: null,
+        I_II: 0,
+        III_IV: 0,
+        V_VI: 0,
+        VII_VIII: 0,
+        IX_X: 0,
 
-        entrance_secured: null,
+        entrance_secured: 0,
         entrance_max: 100,
-        entrance_percenteage: null,
+        entrance_percenteage: 0,
 
         school_board: null,
         sch_qual_id: null,
@@ -139,8 +139,12 @@ function MarkDetails() {
         const getDefaultValues = async () => {
             const queryParams = Object.keys(formData).join(',')
             const fetchedData = await services.fetchData(applicationNo, queryParams)
-            setFormData(fetchedData)
-            reset(fetchedData)
+            const cleanedData = Object.entries(fetchedData).reduce((acc, [key, value]) => {
+                acc[key] = value === "0.00" ? 0 : value;
+                return acc;
+            }, {});
+            setFormData(cleanedData)
+            reset(cleanedData)
             if (getValues('school_tc_date')) {
                 let school_tc_date = new Date(getValues('school_tc_date')).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')
                 setValue('school_tc_date', school_tc_date)
@@ -178,11 +182,11 @@ function MarkDetails() {
     }, [])
 
     const calculatePercentage = (sec, max) => {
-        return (sec && max) ? ((sec / max) * 100).toFixed(2) : null
+        return (sec && max) ? ((sec / max) * 100).toFixed(2) : 0
     }
 
     const calculateAverage = (mark1, mark2) => {
-        return (mark1 && mark2) ? ((mark1 + mark2) / 2).toFixed(2) : null
+        return (mark1 && mark2) ? ((mark1 + mark2) / 2).toFixed(2) : 0
     }
 
     const physicsSec = Number(watch('physics_secured'))
@@ -361,7 +365,7 @@ function MarkDetails() {
                         fieldname={"school_board"}
                         formcontrol={control}
                         storeLabel={true}
-                        // sorted={false}
+                    // sorted={false}
                     />
                     <InputField
                         label='School class'

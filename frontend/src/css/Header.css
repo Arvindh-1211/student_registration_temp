@@ -1,12 +1,14 @@
 .header {
     display: flex;
     justify-content: space-between;
+    border-bottom: 1px solid #939497;
 }
 
 .bit-logo {
-    min-width: 200px;
-    width: 25vw;
-    height: auto;
+    /* min-width: 200px; */
+    margin-left: 1vw;
+    height: 70px;
+    width: auto;
 }
 
 .header-username {
@@ -17,11 +19,19 @@
     display: none;
 }
 
+.header-data-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1vw;
+}
+
 .header-data {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: end;
-    margin: 2vh 2vw 0 0;
+    margin: 0 2vw 0 0;
 }
 
 .header-data>.application-no {
@@ -88,6 +98,15 @@
     height: 26px;
 }
 
+.header-dropdown-menu-link {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.header-dropdown-menu-link:hover {
+    color: #48246e;
+}
+
 .header-dropdown-menu-btn {
     display: flex;
     align-items: center;
@@ -112,8 +131,8 @@
 
 @media (max-width: 480px) {
     .bit-logo {
-        width: 300px;
-        height: 70px;
+        height: 60px;
+        width: auto;
     }
 
     .header-username {
