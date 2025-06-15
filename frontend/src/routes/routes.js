@@ -12,6 +12,7 @@ import Success from "../pages/Success";
 import AdminHome from "../pages/AdminHome";
 import ProtectedRoute from "../Components/ProtectedRoute";
 import IncompleteApplication from "../pages/IncompleteApplication";
+import GoBack from "../Components/GoBack";
 
 const routes = [
     {
@@ -20,7 +21,7 @@ const routes = [
     },
     {
         path: '/',
-        element: <BranchDetails />
+        element: <GoBack />
     },
     // {
     //     path: '/',

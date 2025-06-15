@@ -147,6 +147,7 @@ function ParentDetails() {
                         registerProps={register("mother_name")}
                         type="text"
                         error={errors.mother_name && errors.mother_name.message}
+                        required
                     />
 
                     <DropDown

@@ -5,7 +5,7 @@ import { GoPlus } from "react-icons/go";
 import '../css/Table.css'
 
 function Table({ tableData = [], title, onRowClick, onCreateNew = null }) {
-    const fields = tableData && tableData.length > 0 ? Object.keys(tableData[0]) : null
+    const fields = tableData && tableData.length > 0 ? Object.keys(tableData[0]) : []
 
     const [filteredData, setFilteredData] = useState(tableData)
     const [filteredFields, setFilteredFields] = useState(fields)
@@ -58,12 +58,12 @@ function Table({ tableData = [], title, onRowClick, onCreateNew = null }) {
         const searchTerm = e.target.value.toLowerCase()
         const filtered = tableData.filter((row) => {
             return filteredFields.some((field) => {
-                return row[field].toString().toLowerCase().includes(searchTerm)
+                const value = row[field];
+                return value !== null && value !== undefined && value.toString().toLowerCase().includes(searchTerm)
             })
         })
         setFilteredData(filtered)
     }
-
     const handleFilterChange = (e) => {
         const { value, checked } = e.target;
         if (checked) {

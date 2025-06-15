@@ -7,7 +7,7 @@ import Loading from '../Components/Loading'
 import Error from '../Components/Error'
 
 function IncompleteApplication() {
-    const [submiitedApplications, setSubmittedApplications] = useState([])
+    const [submittedApplications, setSubmittedApplications] = useState([])
     const [incompleteApplications, setIncompleteApplications] = useState([])
     const [isEditApplicationModalOpen, setIsEditApplicationModalOpen] = useState(false)
     const [applicationData, setApplicationData] = useState(null)
@@ -60,7 +60,7 @@ function IncompleteApplication() {
             )}
 
             <Table
-                tableData={submiitedApplications}
+                tableData={submittedApplications}
                 title={'Submitted Applications'}
             />
 

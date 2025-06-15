@@ -53,8 +53,7 @@ const ParentDetails = Yup.object().shape({
 
     mother_name: Yup.string()
         .matches(/^[A-Za-zÀ-ÿ]+([ '-][A-Za-zÀ-ÿ]+)*$/, "Name should contain only characters and spaces")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .required("Mother's Name is required"),
 
     parent_income_mother: Yup.number()
         .min(0, "Income should be positive")
@@ -123,6 +122,9 @@ const AddressDetails = Yup.object().shape({
     comm_add_pincode: Yup.string()
         .length(6, "PIN code must be 6 digits")
         .required("PIN code is required"),
+
+    area_location: Yup.string()
+        .required("Area location is required"),
 
     perm_add_street: Yup.string()
         .required("Street name is required"),
