@@ -161,7 +161,7 @@ function PersonalDetails() {
                 <Row>
                     <DropDown
                         label="Gender"
-                        options={{ "Male": "Male", "Female": "Female" }}
+                        options={{ "MALE": "MALE", "FEMALE": "FEMALE" }}
                         fieldname={"gender"}
                         formcontrol={control}
                         sorted={false}

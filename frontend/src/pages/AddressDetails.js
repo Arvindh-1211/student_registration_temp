@@ -195,7 +195,7 @@ function AddressDetails() {
                     />
                     <DropDown
                         label="Area Location"
-                        options={{ "RURAL": "RURAL", "URBAN": "Urban" }}
+                        options={{ "RURAL": "RURAL", "URBAN": "URBAN" }}
                         fieldname={"area_location"}
                         formcontrol={control}
                         error={errors.area_location && errors.area_location.message}
