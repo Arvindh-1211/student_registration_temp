@@ -198,6 +198,7 @@ function AddressDetails() {
                         options={{ "RURAL": "RURAL", "URBAN": "Urban" }}
                         fieldname={"area_location"}
                         formcontrol={control}
+                        error={errors.area_location && errors.area_location.message}
                         required
                     />
                 </Row>
