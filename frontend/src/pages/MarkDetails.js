@@ -126,6 +126,7 @@ function MarkDetails() {
     })
 
     const [options, setOptions] = useState({
+        'district': {},
         'school_board': {},
         'sch_qual_id': {},
         'sch_yr_pass': {},
@@ -331,6 +332,13 @@ function MarkDetails() {
     const onSubmit = async (data) => {
         setIsLoading(true)
         setError(null)
+        // Append school_district with school_name and remove school_district from data
+        if (data.school_district) {
+            data.school_name = `${data.school_name}, ${data.school_district}`;
+            delete data.school_district;
+        }
+
+
         const response = await services.updateData(applicationNo, data)
 
         if (response) {
@@ -359,6 +367,16 @@ function MarkDetails() {
                         error={errors.school_name && errors.school_name.message}
                         required
                     />
+                    {/* school_district is not a valid field in student_register table. Append this field with school_name with ',' */}
+                    <DropDown
+                        label="School District"
+                        options={options['district']}
+                        fieldname={"school_district"}
+                        formcontrol={control}
+                        storeLabel={true}
+                        error={errors.school_district && errors.school_district.message}
+                        required
+                    />
                     <DropDown
                         label="School Board"
                         options={options['school_board']}
@@ -366,12 +384,6 @@ function MarkDetails() {
                         formcontrol={control}
                         storeLabel={true}
                     // sorted={false}
-                    />
-                    <InputField
-                        label='School class'
-                        registerProps={register("school_class")}
-                        type='text'
-                        error={errors.school_class && errors.school_class.message}
                     />
                 </Row>
                 <Row>
@@ -389,12 +401,11 @@ function MarkDetails() {
                         error={errors.school_tc_date && errors.school_tc_date.message}
                         required
                     />
-                    <DropDown
-                        label="Qualification"
-                        options={options['sch_qual_id']}
-                        fieldname={"sch_qual_id"}
-                        formcontrol={control}
-                        sorted={false}
+                    <InputField
+                        label='School class'
+                        registerProps={register("school_class")}
+                        type='text'
+                        error={errors.school_class && errors.school_class.message}
                     />
                 </Row>
                 <Row>
@@ -427,6 +438,13 @@ function MarkDetails() {
                         type='number'
                         error={errors.sch_attempt && errors.sch_attempt.message}
                         required
+                    />
+                    <DropDown
+                        label="Qualification"
+                        options={options['sch_qual_id']}
+                        fieldname={"sch_qual_id"}
+                        formcontrol={control}
+                        sorted={false}
                     />
                 </Row>
 

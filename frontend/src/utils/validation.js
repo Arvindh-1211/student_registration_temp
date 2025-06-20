@@ -220,7 +220,11 @@ const AdditionalDetails = Yup.object().shape({
 
 const MarkDetails = Yup.object().shape({
     school_name: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
         .required("School name is reuquired"),
+    
+    school_district: Yup.string()
+        .required("District is required"),
 
     school_tc_no: Yup.string()
         .matches(/^[A-Za-z0-9-]+$/, "Invalid TC number")
