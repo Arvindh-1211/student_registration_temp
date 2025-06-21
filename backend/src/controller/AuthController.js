@@ -327,9 +327,10 @@ class AuthController {
                         fields.dept_id = branch_details[0][0].dept_id
                         fields.degree_level = branch_details[0][0].degree_level
 
-                        if (fields.year_of_completion === '') {
+                        if (!fields.year_of_completion) {
                             fields.year_of_completion = fields.year_of_admission + branch_details[0][0].no_of_year
                         }
+                        
 
                         // Getting regulation_id
                         let year_master_id = ''

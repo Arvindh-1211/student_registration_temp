@@ -126,9 +126,11 @@ function Table({ tableData = [], title, onRowClick, onCreateNew = null }) {
                     </thead>
                     <tbody>
                         {filteredData && filteredData.length > 0 ? filteredData.slice(from, to).map((row, index) => (
-                            <tr key={index} onClick={() => onRowClick ? onRowClick(row) : null}>
+                            <tr key={index}>
                                 {filteredFields.map((field, index) => (
-                                    <td key={index}>{row[field]}</td>
+                                    <td key={index} onClick={() => onRowClick && index==0 ? onRowClick(row) : null} className={`${onRowClick && index==0 ? 'clickable-data' : ''}`}>
+                                        {row[field]}
+                                    </td>
                                 ))}
                             </tr>
                         )) : (

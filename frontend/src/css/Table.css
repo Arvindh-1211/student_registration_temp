@@ -138,9 +138,18 @@
     border-bottom: 2px solid #48246e;
 }
 
+.clickable-data{
+    cursor: pointer !important;
+    text-decoration: underline;
+}
+.clickable-data:hover {
+    color: red;
+}
+
 .table td {
     padding: 10px 15px;
     border-bottom: 1px solid #ddd;
+    cursor: default;
 }
 
 .table tbody tr:hover {

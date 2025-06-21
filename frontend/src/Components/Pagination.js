@@ -27,11 +27,23 @@ function Pagination() {
         (
             < div className='paginationContainer' >
                 <div className='pagination'>
-                    {routes.map((route, index) => (
-                        <NavLink key={index + 1} to={route}>
-                            <div>{index + 1}</div>
-                        </NavLink>
-                    ))}
+                    {routes.map((route, index) => {
+                        const isClickable = auth?.role === 'admin' || auth?.role === 'manager';
+                        return (
+                            <NavLink
+                                key={index + 1}
+                                to={route}
+                                onClick={e => {
+                                    if (!isClickable) e.preventDefault();
+                                }}
+                                className={!isClickable ? 'disabled-pagination' : ''}
+                                tabIndex={!isClickable ? -1 : 0}
+                                style={!isClickable ? { pointerEvents: 'none', color: '#aaa', cursor: 'not-allowed' } : {}}
+                            >
+                                <div>{index + 1}</div>
+                            </NavLink>
+                        );
+                    })}
                 </div>
             </div >
         )
