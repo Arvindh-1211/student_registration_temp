@@ -150,6 +150,11 @@ function MarkDetails() {
                 let school_tc_date = new Date(getValues('school_tc_date')).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')
                 setValue('school_tc_date', school_tc_date)
             }
+            if(getValues('school_name')){
+                let [school_name, school_district] = getValues('school_name').split(', ');
+                setValue('school_name', school_name);
+                setValue('school_district', school_district || '');
+            }
         }
 
         const getOptions = async () => {
