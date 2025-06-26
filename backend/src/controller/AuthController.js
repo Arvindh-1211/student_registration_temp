@@ -302,7 +302,7 @@ class AuthController {
                         }
 
                         const branch_id = await camps.query(`
-                                SELECT branch_id FROM branch_master WHERE branch_name='${row.branch.toUpperCase()}' AND degree_level='UG'
+                                SELECT branch_id FROM branch_master WHERE branch_name='${row.branch.toUpperCase()}' AND degree_level='${row.degree_level.toUpperCase()}'
                             `)
                         fields.branch_id = branch_id?.[0]?.[0]?.branch_id
 

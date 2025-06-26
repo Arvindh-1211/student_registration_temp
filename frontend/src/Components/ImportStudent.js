@@ -12,12 +12,12 @@ import DropDown from './DropDown';
 
 function ImportStudent() {
     const [error, setError] = useState(null)
-    const [fileInputError, setFileInputError] = useState({ excel_file: "", student_category: "" });
     const [isLoading, setIsLoading] = useState(false)
     const [insertionError, setInsertionError] = useState([])
 
     const [file, setFile] = useState(null);
-    const [studentCategory, setStudentCategory] = useState(null); // <-- Add this line
+    const [studentCategory, setStudentCategory] = useState(null);
+    const [degreeLevel, setDegreeLevel] = useState(null);
 
     const studentCategoryOptions = [
         { value: 'G', label: 'GOVERNMENT' },
@@ -25,6 +25,11 @@ function ImportStudent() {
         { value: 'M', label: 'MANAGEMENT' },
         { value: 'ML', label: 'MANAGEMENT LATERAL' }
     ];
+
+    const degreeLevelOptions = [
+        { value: 'UG', label: 'UG' },
+        { value: 'PG', label: 'PG' },
+    ]
 
     const onFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -40,17 +45,20 @@ function ImportStudent() {
         setError(null)
 
         if (!file) {
-            setFileInputError({ ...fileInputError, excel_file: "Please select a file" })
+            setError("Please select a file")
             setIsLoading(false)
             return
         }
         if (!studentCategory) {
-            setFileInputError({ ...fileInputError, student_category: "Please select a student category" })
+            setError("Please select a student category")
             setIsLoading(false)
             return
         }
-        setFileInputError({ excel_file: "", student_category: "" });
-
+        if (!degreeLevel) {
+            setError("Please select degree level")
+            setIsLoading(false)
+            return
+        }
 
         const reader = new FileReader();
 
@@ -74,7 +82,7 @@ function ImportStudent() {
                         }
 
                         // Prefix application_no with selected studentCategory value
-                        if (transformedKey === 'application_id' && typeof value === 'string' && studentCategory?.value) {
+                        if (transformedKey === 'application_id' && studentCategory?.value) {
                             value = `${studentCategory.value}${value}`;
                         }
 
@@ -82,18 +90,21 @@ function ImportStudent() {
                     }
                     return acc;
                 }, {});
+                if (degreeLevel?.value) {
+                    modifiedRow['degree_level'] = degreeLevel.value;
+                }
                 return modifiedRow;
             });
 
             // Check if the modifiedData has all required fields
-            const requiredFields = ['application_id', 'name', 'branch', 'community', 'gender', 'email', 'mobile', 'first_graduate'];
+            const requiredFields = ['application_id', 'name', 'branch', 'community', 'gender', 'email', 'mobile'];
             const hasAllRequiredFields = (data) => {
                 if (!data || data.length === 0) return false;
                 const keys = Object.keys(data[0]);
                 return requiredFields.every(field => keys.includes(field));
             };
             if (!hasAllRequiredFields(modifiedData)) {
-                setFileInputError({ ...fileInputError, excel_file: "Some columns are missing" });
+                setError("Some columns are missing");
                 return;
             }
 
@@ -148,7 +159,7 @@ function ImportStudent() {
                                             <AiOutlineCloudUpload className='upload-icon' />
                                             <p className="upload-text"><span className="upload-text-bold">Click to upload</span></p>
                                             <p className="upload-text-small">*File supported - .xlsx</p>
-                                            <p className="upload-text-small">*Required Columns - Application Id, Name, Branch, Community, Gender, Email, Mobile, First Graduate</p>
+                                            <p className="upload-text-small">*Required Columns - Application Id, Name, Branch, Community, Gender, Email, Mobile</p>
                                         </>
                                     }
                                 </div>
@@ -158,20 +169,30 @@ function ImportStudent() {
                         </div>
                     </div>
                     <div className='centre-button'>
-                        <div className='dropDown'>
-                            <Select
-                                options={studentCategoryOptions}
-                                value={studentCategory}
-                                onChange={option => setStudentCategory(option)}
-                                className="dropdown"
-                                classNamePrefix="dropdown"
-                                isSearchable
-                                isClearable={false}
-                                placeholder="Student Category"
-                            />
-                            {fileInputError?.excel_file && <div className="dropdown-error">{fileInputError.excel_file}</div>}
-                            {fileInputError?.student_category && <div className="dropdown-error">{fileInputError.student_category}</div>}
-                        </div>
+                        {/* <div className='dropDown'> */}
+                        <Select
+                            options={degreeLevelOptions}
+                            value={degreeLevel}
+                            onChange={option => setDegreeLevel(option)}
+                            className="dropdown"
+                            classNamePrefix="dropdown"
+                            isSearchable
+                            isClearable={false}
+                            placeholder="Degree Level"
+                        />
+                        {/* </div>
+                        <div className='dropDown'> */}
+                        <Select
+                            options={studentCategoryOptions}
+                            value={studentCategory}
+                            onChange={option => setStudentCategory(option)}
+                            className="dropdown"
+                            classNamePrefix="dropdown"
+                            isSearchable
+                            isClearable={false}
+                            placeholder="Student Category"
+                        />
+                        {/* </div> */}
 
                         <input className='button' type='submit' value="Upload" onSubmit={handleFileUpload} />
                     </div>
@@ -181,11 +202,11 @@ function ImportStudent() {
                 <div className='form-container'>
                     <div className='form'>
                         <div className='insertion-error-header'>Insertion Errors</div>
-                        <ul className='insertion-error-list'>
+                        <ol className='insertion-error-list'>
                             {insertionError.map((error, index) => (
                                 <li key={index} className='insertion-error-item'>{error}</li>
                             ))}
-                        </ul>
+                        </ol>
                     </div>
                 </div>
             )}

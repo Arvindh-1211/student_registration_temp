@@ -118,12 +118,14 @@ function ScholarshipDetails() {
                         options={options}
                         fieldname={"adm_sch_name1"}
                         formcontrol={control}
+                        storeLabel={true}
                         sorted={false}
                     />
                     <InputField
                         label="Amount-1"
                         registerProps={register("adm_sch_amt1")}
                         type="number"
+                        readOnly
                         error={errors.adm_sch_amt1 && errors.adm_sch_amt1.message}
                     />
                 </Row>
@@ -133,12 +135,14 @@ function ScholarshipDetails() {
                         options={options}
                         fieldname={"adm_sch_name2"}
                         formcontrol={control}
+                        storeLabel={true}
                         sorted={false}
                     />
                     <InputField
                         label="Amount-2"
                         registerProps={register("adm_sch_amt2")}
                         type="number"
+                        readOnly
                         error={errors.adm_sch_amt2 && errors.adm_sch_amt2.message}
                     />
                 </Row>

@@ -47,7 +47,7 @@ class StudentRegController {
 
     getStudentUserDetails = async (req, res) => {
         try {
-            const sql = `SELECT * FROM registration_user_details ORDER BY application_id DESC`;
+            const sql = `SELECT * FROM registration_user_details`;
             const result = await camps.query(sql)
             res.json(result[0]);
         } catch (error) {
@@ -67,7 +67,7 @@ class StudentRegController {
             for (let row of data) {
                 try {
                     // Filter out required fields
-                    const requiredFields = ['application_id', 'name', 'branch', 'community', 'gender', 'email', 'mobile', 'first_graduate'];
+                    const requiredFields = ['application_id', 'name', 'branch', 'community', 'gender', 'email', 'mobile', 'degree_level'];
                     row = Object.fromEntries(
                         Object.entries(row).filter(([key]) => requiredFields.includes(key))
                     );
@@ -89,7 +89,7 @@ class StudentRegController {
                     }
 
                     // Check if branch_id is present in the branch_master table
-                    checkSql = `SELECT COUNT(*) as count FROM branch_master WHERE branch_name = '${row.branch.toUpperCase()}'`;
+                    checkSql = `SELECT COUNT(*) as count FROM branch_master WHERE branch_name = '${row.branch.toUpperCase()}' AND degree_level = '${row.degree_level.toUpperCase()}'`;
                     checkResult = await camps.query(checkSql);
                     if (checkResult[0][0].count === 0) {
                         console.log(`Branch not found: ${row.branch}`);

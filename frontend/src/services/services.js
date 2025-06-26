@@ -80,7 +80,7 @@ const inserIntoCAMPS = async (applicationNo) => {
     }
 }
 
-const importStudent = async (data) => {
+const importStudent = async (data, degreeLevel) => {
     try {
         const response = await apiInstance.post(`/student_user_details`, data)
         return response
