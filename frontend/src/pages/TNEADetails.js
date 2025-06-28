@@ -114,6 +114,7 @@ function TNEADetails() {
                         label="TNEA Application No."
                         registerProps={register("tnea_app_no")}
                         type="text"
+                        readOnly={true}
                         error={errors.tnea_app_no && errors.tnea_app_no.message}
                     />
                     <DropDown

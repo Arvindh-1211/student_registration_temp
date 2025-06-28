@@ -309,8 +309,8 @@ class StudentRegController {
 
             } else {
 
-                req.body.modified_by = req.user.user_id
-                req.body.modified_date = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
+                req.body.updated_by = req.user.user_id
+                req.body.updated_date = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
 
                 sql = `
                     UPDATE pre_student_additional_det
@@ -390,7 +390,8 @@ class StudentRegController {
             student_reg['app_date'] = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')
             student_reg['inserted_by'] = req.user.user_id
             student_reg['inserted_date'] = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
-
+            student_reg['modified_by'] = req.user.user_id
+            student_reg['modified_date'] = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
             let fields = Object.keys(student_reg).join(', ')
             let values = Object.entries(student_reg).map(([key, value]) => {
                 if (key === 'photo') {
@@ -417,6 +418,8 @@ class StudentRegController {
 
             student_additional_det['inserted_by'] = req.user.user_id
             student_additional_det['inserted_date'] = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
+            student_additional_det['updated_by'] = req.user.user_id
+            student_additional_det['updated_date'] = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
 
             fields = Object.keys(student_additional_det).join(', ')
             values = Object.values(student_additional_det).map(value => {
@@ -440,10 +443,18 @@ class StudentRegController {
             result = await camps.query(sql)
 
             // Updating application number in student_register and student_additional_det
-            sql = `UPDATE pre_student_register SET application_no = ${APPLICATION_NO} WHERE sno = ${applicationNo}`
+            sql = `UPDATE pre_student_register SET 
+                    application_no = ${APPLICATION_NO}, 
+                    modified_by = ${req.user.user_id}, 
+                    modified_date = '${new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')}'
+                    WHERE sno = ${applicationNo}`
             result = await camps.query(sql)
 
-            sql = `UPDATE pre_student_additional_det SET appl_no = ${APPLICATION_NO} WHERE appl_no = ${applicationNo}`
+            sql = `UPDATE pre_student_additional_det SET 
+                    appl_no = ${APPLICATION_NO},
+                    updated_by = ${req.user.user_id}, 
+                    updated_date = '${new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')}'
+                    WHERE appl_no = ${applicationNo}`
             result = await camps.query(sql)
 
             res.json({ APPLICATION_NO: APPLICATION_NO })
