@@ -47,7 +47,7 @@ class StudentRegController {
 
     getStudentUserDetails = async (req, res) => {
         try {
-            const sql = `SELECT * FROM registration_user_details`;
+            const sql = `SELECT application_id, name, branch, community, gender, email, mobile, degree_level FROM registration_user_details`;
             const result = await camps.query(sql)
             res.json(result[0]);
         } catch (error) {
@@ -71,6 +71,10 @@ class StudentRegController {
                     row = Object.fromEntries(
                         Object.entries(row).filter(([key]) => requiredFields.includes(key))
                     );
+
+                    row.inserted_on = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' '); // Set current timestamp
+                    row.inserted_by = `${req.user.user_id}`; // Assuming req.user.user_id contains the ID of the user performing the insertion
+
                     if (!(row?.application_id?.[0] === 'M' || row?.application_id?.[0] === 'G')) {
                         console.log(`Application ID invalid: ${row}`);
                         insertionError.push(`Application ID invalid: Should be prefixed with 'G' or 'M'  application_id: ${row.application_id}`);
@@ -266,7 +270,9 @@ class StudentRegController {
             SET ${Object.entries(req.body)
                     .map(([key, value]) => `${key} = ${value === null || value === '' ? null : `'${value}'`} `)
                     .join(', ')
-                }
+                },
+                modified_date = '${new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')}',
+                modified_by = '${req.user.user_id}'
             WHERE sno = ${req.params.application_no}
         `;
 
@@ -285,6 +291,9 @@ class StudentRegController {
             const isPresent = await camps.query(sql)
             if (!isPresent[0][0]) {
 
+                req.body.inserted_by = req.user.user_id
+                req.body.inserted_date = new Date().toISOString().slice(0, 19)
+
                 const fields = Object.keys(req.body).join(', ');
                 const values = Object.values(req.body).map(value => {
                     if (value === undefined || value === null || value === '') {
@@ -299,6 +308,9 @@ class StudentRegController {
                 sql = `INSERT INTO pre_student_additional_det (${fields}) VALUES (${values})`
 
             } else {
+
+                req.body.modified_by = req.user.user_id
+                req.body.modified_date = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
 
                 sql = `
                     UPDATE pre_student_additional_det
@@ -376,6 +388,8 @@ class StudentRegController {
             }
 
             student_reg['app_date'] = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')
+            student_reg['inserted_by'] = req.user.user_id
+            student_reg['inserted_date'] = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
 
             let fields = Object.keys(student_reg).join(', ')
             let values = Object.entries(student_reg).map(([key, value]) => {
@@ -401,6 +415,9 @@ class StudentRegController {
             student_additional_det['appl_no'] = APPLICATION_NO
             student_additional_det['enroll_no'] = '0'
 
+            student_additional_det['inserted_by'] = req.user.user_id
+            student_additional_det['inserted_date'] = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
+
             fields = Object.keys(student_additional_det).join(', ')
             values = Object.values(student_additional_det).map(value => {
                 if (typeof value === 'string') {
@@ -413,7 +430,7 @@ class StudentRegController {
 
             sql = `INSERT INTO student_additional_det (${fields}) VALUES (${values})`
             result = await camps.query(sql)
-            
+
             // Insert into student_produced_certificates_reg table
             sql = `INSERT INTO student_produced_certificates_reg (application_no, other_certificates) VALUES (${APPLICATION_NO}, '')`
             result = await camps.query(sql)

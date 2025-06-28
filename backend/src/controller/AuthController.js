@@ -263,6 +263,9 @@ class AuthController {
                         "photo": "",
                         
                         // "aadhar_no": ""
+
+                        inserted_by: row.application_id,
+                        inserted_date: new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
                     }
 
 
