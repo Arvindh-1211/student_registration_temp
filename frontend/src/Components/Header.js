@@ -1,13 +1,10 @@
 import '../css/Header.css'
 
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FaUserCircle } from "react-icons/fa";
+import { useLocation, useNavigate } from 'react-router-dom';
 import { BiLogOut } from "react-icons/bi";
 import { GoPlus } from "react-icons/go";
 import { MdOutlineHome } from "react-icons/md";
-import { MdHome } from "react-icons/md";
-import { MdModeEditOutline } from "react-icons/md";
 import { useState, useRef, useEffect } from 'react';
 
 import bitlogo from '../assets/bitlogo.svg'
@@ -92,7 +89,10 @@ function Header() {
 			{isLoading && <Loading />}
 			{error && <Error message={error} />}
 			<div className='header'>
-				<img className='bit-logo' src={bitlogo} alt='Bannari Amman Institute of Technology' />
+				<div className='header-logo-container'>
+					<img className='bit-logo' src={bitlogo} alt='Bannari Amman Institute of Technology' />
+					<span className='header-title'>BIT ADMISSION PORTAL</span>
+				</div>
 				<div className='header-data-container'>
 					{window.innerWidth > 480 &&
 						<ProtectedComponent users={["admin", "manager"]}>

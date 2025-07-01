@@ -68,6 +68,7 @@ const insertStudentAdditionalDet = async (data) => {
         return response
     } catch (error) {
         console.log("Cannot insert into student_additional_det table")
+        throw error;
     }
 }
 

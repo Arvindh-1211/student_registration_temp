@@ -90,13 +90,19 @@ function AdditionalDetails() {
         setIsLoading(true)
         setError(null)
         data = { ...data, appl_no: applicationNo }
-        const response = await services.insertStudentAdditionalDet(data)
-        if (response.status === 200) {
-            navigate('/final_review')
-        } else {
+        try {
+            const response = await services.insertStudentAdditionalDet(data)
+            if (response.status === 200) {
+                navigate('/final_review')
+            } else {
+                setError("Error submitting form!")
+            }
+        } catch (error) {
             setError("Error submitting form!")
+        } finally {
+            setIsLoading(false)
         }
-        setIsLoading(false)
+
 
     }
 
@@ -165,7 +171,7 @@ function AdditionalDetails() {
                     /> */}
                     <DropDown
                         label="How did you choose this college?"
-                        options={{ "Friends and Relatives":"Friends and Relatives", "Sibling":"Sibling", "Newspaper":"Newspaper", "BIT Alumini":"BIT Alumini", "Social Media":"Social Media", "I did my own research":"I did my own research"}}
+                        options={{ "Friends and Relatives": "Friends and Relatives", "Sibling": "Sibling", "Newspaper": "Newspaper", "BIT Alumini": "BIT Alumini", "Social Media": "Social Media", "I did my own research": "I did my own research" }}
                         fieldname={"choose_college"}
                         formcontrol={control}
                         sorted={false}

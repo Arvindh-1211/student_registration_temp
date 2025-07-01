@@ -2,7 +2,7 @@ import './App.css';
 
 import Header from './Components/Header';
 
-import { NavLink, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Pagination from './Components/Pagination';
 
 function App() {

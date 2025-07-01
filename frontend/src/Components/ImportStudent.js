@@ -8,7 +8,6 @@ import Select from "react-select";
 import Loading from "./Loading";
 import Error from "./Error";
 import services from '../services/services';
-import DropDown from './DropDown';
 
 function ImportStudent() {
     const [error, setError] = useState(null)
@@ -169,7 +168,6 @@ function ImportStudent() {
                         </div>
                     </div>
                     <div className='centre-button'>
-                        {/* <div className='dropDown'> */}
                         <Select
                             options={degreeLevelOptions}
                             value={degreeLevel}
@@ -180,8 +178,6 @@ function ImportStudent() {
                             isClearable={false}
                             placeholder="Degree Level"
                         />
-                        {/* </div>
-                        <div className='dropDown'> */}
                         <Select
                             options={studentCategoryOptions}
                             value={studentCategory}
@@ -192,7 +188,6 @@ function ImportStudent() {
                             isClearable={false}
                             placeholder="Student Category"
                         />
-                        {/* </div> */}
 
                         <input className='button' type='submit' value="Upload" onSubmit={handleFileUpload} />
                     </div>
