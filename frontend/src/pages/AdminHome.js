@@ -7,6 +7,7 @@ import Loading from '../Components/Loading'
 import Error from '../Components/Error'
 import services from '../services/services'
 import EditUserModal from '../Components/EditUserModal'
+import AddStudent from '../Components/AddStudent'
 
 function AdminHome() {
     const [studentDetails, setStudentDetails] = useState([])
@@ -24,10 +25,10 @@ function AdminHome() {
             setIsLoading(true)
             setError(null)
             try {
-                const studentResponse = await services.getStudentDetails()
-                setStudentDetails(studentResponse)
                 const userResponse = await services.getUserDetails()
                 setUserDetails(userResponse)
+                const studentResponse = await services.getStudentDetails()
+                setStudentDetails(studentResponse)
             } catch (error) {
                 setError("Failed to fetch students data!")
             } finally {
@@ -56,6 +57,7 @@ function AdminHome() {
                 </div>
             </ProtectedComponent>
 
+            <AddStudent />
             <ImportStudent />
             <div className='form-container'>
                 <Table tableData={studentDetails} title={'Student Details'} />

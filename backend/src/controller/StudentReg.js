@@ -8,7 +8,7 @@ class StudentRegController {
                     (SELECT bm.branch_name FROM branch_master bm WHERE bm.branch_id=psr.branch_id) AS branch,
                     (SELECT cm.course_code FROM course_master cm WHERE cm.course_id=psr.course_id) AS course,
                     (SELECT sc.stu_cat FROM student_category sc WHERE sc.stu_cat_id=psr.student_cat_id) AS student_cat
-                FROM pre_student_register psr WHERE psr.application_no IS NOT NULL ORDER BY psr.sno DESC
+                FROM pre_student_register psr WHERE psr.application_no IS NOT NULL ORDER BY psr.application_no DESC
             `;
             const result = await camps.query(sql)
             res.json(result[0]);
@@ -47,7 +47,7 @@ class StudentRegController {
 
     getStudentUserDetails = async (req, res) => {
         try {
-            const sql = `SELECT application_id, name, branch, community, gender, email, mobile, degree_level FROM registration_user_details`;
+            const sql = `SELECT application_id, name, branch, community, gender, email, mobile, degree_level FROM registration_user_details ORDER BY inserted_on DESC`;
             const result = await camps.query(sql)
             res.json(result[0]);
         } catch (error) {

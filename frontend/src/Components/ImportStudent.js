@@ -8,6 +8,8 @@ import Select from "react-select";
 import Loading from "./Loading";
 import Error from "./Error";
 import services from '../services/services';
+import InputField from './InputField';
+import Row from './Row';
 
 function ImportStudent() {
     const [error, setError] = useState(null)
@@ -193,18 +195,21 @@ function ImportStudent() {
                     </div>
                 </form>
             </div>
-            {insertionError.length > 0 && (
-                <div className='form-container'>
-                    <div className='form'>
-                        <div className='insertion-error-header'>Insertion Errors</div>
-                        <ol className='insertion-error-list'>
-                            {insertionError.map((error, index) => (
-                                <li key={index} className='insertion-error-item'>{error}</li>
-                            ))}
-                        </ol>
+
+            {
+                insertionError.length > 0 && (
+                    <div className='form-container'>
+                        <div className='form'>
+                            <div className='insertion-error-header'>Insertion Errors</div>
+                            <ol className='insertion-error-list'>
+                                {insertionError.map((error, index) => (
+                                    <li key={index} className='insertion-error-item'>{error}</li>
+                                ))}
+                            </ol>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
         </>
     )
 }

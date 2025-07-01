@@ -222,7 +222,7 @@ const MarkDetails = Yup.object().shape({
     school_name: Yup.string()
         .transform((value, originalValue) => originalValue === '' ? null : value)
         .required("School name is reuquired"),
-    
+
     school_district: Yup.string()
         .required("District is required"),
 
@@ -608,6 +608,42 @@ const MarkDetails = Yup.object().shape({
         .nullable(true),
 })
 
+const AddStudent = Yup.object().shape({
+    application_id: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .required("Application ID is required"),
+
+    name: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .required("Name is required"),
+
+    email: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .email("Invalid email format")
+        .required("Email is required"),
+
+    mobile: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .length(10, "Mobile number must be 10 digits")
+        .required("Mobile number is required"),
+
+    community: Yup.string()
+        .required("Community is required"),
+
+    gender: Yup.string()
+        .required("Gender is required"),
+
+    student_category: Yup.string()
+        .required("Student category is required"),
+
+    degree_level: Yup.string()
+        .required("Degree level is required"),
+
+    branch: Yup.string()
+        .required("Branch is required"),
+
+})
+
 const schema = {
     PersonalDetails,
     ParentDetails,
@@ -617,6 +653,7 @@ const schema = {
     ScholarshipDetails,
     AdditionalDetails,
     MarkDetails,
+    AddStudent
 }
 
 export default schema
