@@ -13,6 +13,7 @@ import AdminHome from "../pages/AdminHome";
 import ProtectedRoute from "../Components/ProtectedRoute";
 import IncompleteApplication from "../pages/IncompleteApplication";
 import GoBack from "../Components/GoBack";
+import PaymentDetails from "../pages/PaymentDetails";
 
 const routes = [
     {
@@ -62,6 +63,10 @@ const routes = [
     {
         path: '/additional_details',
         element: <AdditionalDetails />
+    },
+    {
+        path: '/payment_details',
+        element: <PaymentDetails />
     },
     {
         path: '/final_review',

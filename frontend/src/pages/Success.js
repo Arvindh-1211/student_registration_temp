@@ -5,16 +5,18 @@ import '../css/Success.css';
 
 function Success() {
     const navigate = useNavigate();
+    const auth = useSelector((state) => state.auth)
+
     const applicationNo = useSelector((state) => state.applicationNo.value)
     const campsApplNo = useSelector((state) => state.applicationNo.campsApplNo)
 
     useEffect(() => {
-        if(!campsApplNo){
+        if (!campsApplNo && auth && ['admin', 'manager'].includes(auth.role)) {
             navigate('/personal_details')
         }
     }, [])
 
-    const handleClick= () =>{
+    const handleClick = () => {
         navigate('/login')
     }
 
@@ -36,7 +38,11 @@ function Success() {
                     </div>
                     <div className='success-msg'>Success!</div>
                     {/* <div>Application submitted successfully.</div> */}
-                    <div className='appl-no'>Application Number : {campsApplNo}</div>
+
+                    {campsApplNo &&
+                        <div className='appl-no'>Application Number : {campsApplNo}</div>
+                    }
+
                     {/* <div>Application Number Temp : {applicationNo}</div> */}
                     <div className='button-container'>
                         <button className='create-btn' onClick={handleClick}>Okay</button>

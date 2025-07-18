@@ -644,6 +644,187 @@ const AddStudent = Yup.object().shape({
 
 })
 
+const PaymentDetails = Yup.object().shape({
+    // Token number validation (admin/manager only)
+    token_number: Yup
+        .number()
+        .typeError('Token Number must be a number')
+        .positive('Token Number must be positive')
+        .nullable(),
+
+    // TFC Initial Payment validation
+    tfc_initial_payment: Yup
+        .number()
+        .typeError('TFC Initial Payment must be a number')
+        .min(0, 'TFC Initial Payment cannot be negative')
+        .required('TFC Initial Payment is required'),
+
+    // Payment methods array validation
+    payment_method: Yup
+        .array()
+        .of(Yup.string().oneOf(['demand draft', 'card swiping', 'online payment', 'no fees'], 'Invalid payment method'))
+        .min(1, 'At least one payment method must be selected')
+        .required('Payment method selection is required'),
+
+    // Demand Draft validations - conditional based on payment_method array
+    dd_amount: Yup
+        .number()
+        .typeError('DD Amount must be a number')
+        .when('payment_method', (paymentMethods, schema) => {
+            if (paymentMethods && paymentMethods.includes('demand draft')) {
+                return schema
+                    .required('DD Amount is required for demand draft')
+                    .min(0.01, 'DD Amount must be greater than 0');
+            }
+            return schema.nullable();
+        }),
+
+    dd_bank_name: Yup
+        .string()
+        .when('payment_method', (paymentMethods, schema) => {
+            if (paymentMethods && paymentMethods.includes('demand draft')) {
+                return schema
+                    .required('Bank Name is required for demand draft')
+                    .min(2, 'Bank Name must be at least 2 characters');
+            }
+            return schema.nullable();
+        }),
+
+    dd_date: Yup
+        .date()
+        .typeError('Please enter a valid date')
+        .when('payment_method', (paymentMethods, schema) => {
+            if (paymentMethods && paymentMethods.includes('demand draft')) {
+                return schema
+                    .required('DD Date is required for demand draft')
+                    .max(new Date(), 'DD Date cannot be in the future');
+            }
+            return schema.nullable();
+        }),
+
+    dd_number: Yup
+        .number()
+        .when('payment_method', (paymentMethods, schema) => {
+            if (paymentMethods && paymentMethods.includes('demand draft')) {
+                return Yup.number()
+                    .typeError('DD Number must be a number')
+                    .required('DD Number is required for demand draft')
+                    .test('len', 'DD Number must be exactly 6 digits', val => val && val.toString().length === 6);
+            }
+            return Yup.number().nullable();
+        }),
+
+    // Card Swiping validations
+    card_swipe_amount: Yup
+        .number()
+        .typeError('Card Swipe Amount must be a number')
+        .when('payment_method', (paymentMethods, schema) => {
+            if (paymentMethods && paymentMethods.includes('card swiping')) {
+                return schema
+                    .required('Card Swipe Amount is required for card swiping')
+                    .min(0.01, 'Card Swipe Amount must be greater than 0');
+            }
+            return schema.nullable();
+        }),
+
+    card_swipe_reference_no: Yup
+        .string()
+        .when('payment_method', (paymentMethods, schema) => {
+            if (paymentMethods && paymentMethods.includes('card swiping')) {
+                return schema
+                    .required('Card Reference Number is required for card swiping')
+                    .min(4, 'Card Reference Number must be at least 4 characters')
+                    .matches(/^[0-9A-Za-z]+$/, 'Card Reference Number must contain only letters and numbers');
+            }
+            return schema.nullable();
+        }),
+
+    // Online Payment validations
+    online_pay_amount: Yup
+        .number()
+        .typeError('Online Payment Amount must be a number')
+        .when('payment_method', (paymentMethods, schema) => {
+            if (paymentMethods && paymentMethods.includes('online payment')) {
+                return schema
+                    .required('Online Payment Amount is required for online payment')
+                    .min(0.01, 'Online Payment Amount must be greater than 0');
+            }
+            return schema.nullable();
+        }),
+
+    online_pay_reference_no: Yup
+        .string()
+        .when('payment_method', (paymentMethods, schema) => {
+            if (paymentMethods && paymentMethods.includes('online payment')) {
+                return schema
+                    .required('Online Reference Number is required for online payment')
+                    .min(4, 'Online Reference Number must be at least 4 characters')
+                    .matches(/^[0-9A-Za-z]+$/, 'Online Reference Number must contain only letters and numbers');
+            }
+            return schema.nullable();
+        }),
+
+    // Custom validation to ensure total amount is provided when payment methods are selected
+    total_amount: Yup
+        .number()
+        .typeError('Total Amount must be a number')
+        .when('payment_method', (paymentMethods, schema) => {
+            if (paymentMethods && paymentMethods.length > 0 && !paymentMethods.includes('no fees')) {
+                return schema
+                    .required('Total Amount is required')
+                    .min(0.01, 'Total Amount must be greater than 0');
+            }
+            return schema.nullable();
+        })
+}).test('payment-method-validation', 'Payment validation failed', function (values) {
+    const { payment_method } = values;
+
+    // If no payment methods selected, fail validation
+    if (!payment_method || payment_method.length === 0) {
+        return this.createError({
+            path: 'payment_method',
+            message: 'At least one payment method must be selected'
+        });
+    }
+
+    // If "no fees" is selected with other methods, fail validation
+    if (payment_method.includes('no fees') && payment_method.length > 1) {
+        return this.createError({
+            path: 'payment_method',
+            message: 'No fees cannot be selected with other payment methods'
+        });
+    }
+
+    // If payment methods are selected (not "no fees"), validate total amount matches sum
+    if (!payment_method.includes('no fees')) {
+        const ddAmount = parseFloat(values.dd_amount) || 0;
+        const cardAmount = parseFloat(values.card_swipe_amount) || 0;
+        const onlineAmount = parseFloat(values.online_pay_amount) || 0;
+        const calculatedTotal = ddAmount + cardAmount + onlineAmount;
+
+        if (calculatedTotal <= 0) {
+            return this.createError({
+                path: 'payment_method',
+                message: 'At least one payment amount must be provided'
+            });
+        }
+
+        // Optional: Validate that the total_amount matches the calculated total
+        // Uncomment if you want strict total validation
+        /*
+        const totalAmount = parseFloat(values.total_amount) || 0;
+        if (Math.abs(totalAmount - calculatedTotal) > 0.01) {
+            return this.createError({
+                path: 'total_amount',
+                message: 'Total amount does not match the sum of individual payments'
+            });
+        }
+        */
+    }
+
+    return true;
+});
+
 const schema = {
     PersonalDetails,
     ParentDetails,
@@ -653,7 +834,7 @@ const schema = {
     ScholarshipDetails,
     AdditionalDetails,
     MarkDetails,
-    AddStudent
+    AddStudent,
 }
 
 export default schema

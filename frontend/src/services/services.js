@@ -31,6 +31,29 @@ const updateData = async (applicationNo, data) => {
     }
 }
 
+const updatePaymentDetails = async (applicationNo, data) => {
+    try {
+        const response = await apiInstance.post(`payment_details/${applicationNo}`, data)
+        return response
+    } catch (error) {
+        console.log("Cannot update payment details in admission_payment_details table")
+    }
+}
+
+const getPaymentDetails = async (applicationNo, queryParams) => {
+    try {
+        const response = await apiInstance.get(`/payment_details/${applicationNo}`, {
+            params: {
+                fields: queryParams
+            }
+        })
+        return response.data
+    }
+    catch (error) {
+        console.log("Cannot fetch payment details from admission_payment_details table")
+    }
+}
+
 const fetchFromMaster = async (option) => {
     try {
         const response = await apiInstance.get(`/master/${option}`)
@@ -169,6 +192,8 @@ const services = {
     createNewApplication,
     fetchData,
     updateData,
+    updatePaymentDetails,
+    getPaymentDetails,
     fetchFromMaster,
     getValueFromMaster,
     getStudentAdditionalDet,

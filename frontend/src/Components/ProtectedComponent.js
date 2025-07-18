@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 
 function ProtectedComponent({ children, users }) {
-    const navigate = useNavigate();
     const auth = useSelector((state) => state.auth)
     const [isVisible, setIsVisible] = useState(true)
 
@@ -22,7 +20,7 @@ function ProtectedComponent({ children, users }) {
             }
         }
         getUserDetails()
-    }, [auth, children, users, navigate])
+    }, [auth, children, users])
 
     return (
         <>

@@ -74,7 +74,7 @@ class MasterTableController {
                 const data = this.options[req.params.option].data
                 const data_master = this.options[req.params.option].data_master
     
-                const sql = `SELECT ${data_id}, ${data} FROM ${data_master} WHERE status = 1`
+                const sql = `SELECT ${data_id}, ${data} FROM Transport.${data_master} WHERE status = 1`
                 const results = await camps.query(sql)
                 const response = results[0].reduce((acc, item) => {
                     acc[item[data_id]] = item[data];

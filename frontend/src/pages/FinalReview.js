@@ -9,6 +9,7 @@ import Error from "../Components/Error";
 
 import { setCampsApplNo } from '../store/applicationNoSlice';
 import services from "../services/services";
+import ProtectedComponent from '../Components/ProtectedComponent';
 
 
 function Detail({ label, value, marks }) {
@@ -26,6 +27,7 @@ function Detail({ label, value, marks }) {
 
 function FinalReview() {
     const navigate = useNavigate();
+    const auth = useSelector((state) => state.auth)
     const applicationNo = useSelector((state) => state.applicationNo.value)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -47,6 +49,8 @@ function FinalReview() {
         caste_id: '',
         religion_id: '',
         nationality_id: '',
+        seat_cat: '',
+        scholar: '',
 
         // Parent Details
         father_name: '',
@@ -105,7 +109,6 @@ function FinalReview() {
         nominee_age: '',
 
         // TNEA Details
-        seat_cat: '',
         quota_id: '',
         tnea_app_no: '',
         tnea_adm_no: '',
@@ -215,6 +218,17 @@ function FinalReview() {
         choose_college: '',
     })
 
+    const [paymentData, setPaymentData] = useState({
+        tfc_initial_payment: '',
+        payment_method: '',
+        pan: '',
+        bank_name: '',
+        dd_date: '',
+        dd_number: '',
+        reference_number: '',
+        amount: '',
+    })
+
     useEffect(() => {
         let fetchedData
         const getDefaultValues = async () => {
@@ -243,6 +257,22 @@ function FinalReview() {
             const queryParams = Object.keys(additionalDet).join(',')
             const response = await services.getStudentAdditionalDet(applicationNo, queryParams)
             setAdditionalDet(response)
+        }
+
+        const getPaymentDetails = async () => {
+            const queryParams = Object.keys(paymentData).join(',')
+            const response = await services.getPaymentDetails(applicationNo, queryParams)
+            setPaymentData(response)
+
+            // Format dd_date if it exists
+            if (response.dd_date) {
+                let dd_date = new Date(response.dd_date).toLocaleDateString('ja-JP', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }).replace(/\//g, '-')
+                setPaymentData((prevData) => ({ ...prevData, dd_date: dd_date }))
+            }
         }
 
         const getValue = async () => {
@@ -393,6 +423,7 @@ function FinalReview() {
             await getDefaultValues()
             await getValue()
             await getAdditionalDet()
+            await getPaymentDetails()
             setIsLoading(false)
         };
 
@@ -408,6 +439,15 @@ function FinalReview() {
         setError(null)
 
         try {
+
+            // Check if admin or manager has enetered token_number, payment_method in payment details
+            if (auth && ['admin', 'manager'].includes(auth.role)) {
+                if (!paymentData.token_number || !paymentData.payment_method) {
+                    setError("Payment not yet verified!")
+                    setIsLoading(false)
+                    return;
+                }
+            }
             const response = await services.inserIntoCAMPS(applicationNo)
             dispatch(setCampsApplNo(response.APPLICATION_NO));
             navigate('/success')
@@ -441,6 +481,8 @@ function FinalReview() {
                         <Detail label="Caste" value={formData.caste_id} />
                         <Detail label="Religion" value={formData.religion_id} />
                         <Detail label="Nationality" value={formData.nationality_id} />
+                        <Detail label="Seat Category" value={formData.seat_cat} />
+                        <Detail label="Scholar" value={formData.scholar} />
                     </div>
                 </div>
             </div>
@@ -543,7 +585,6 @@ function FinalReview() {
                 <hr className='detail-header-line'></hr>
                 <div className='details-container'>
                     <div className='detail-row'>
-                        <Detail label="Seat Category" value={formData.seat_cat} />
                         <Detail label="Quota" value={formData.quota_id} />
                         <Detail
                             label="TNEA Application No."
@@ -560,6 +601,7 @@ function FinalReview() {
                         <Detail label="TNEA Admission No." value={formData.tnea_adm_no} />
                         <Detail label="General Rank" value={formData.general_rank} />
                         <Detail label="Community Rank" value={formData.comm_rank} />
+                        <div></div>
                         <div className='details-sub-header'>TNEA Payment Details</div>
                         <div></div>
                         <Detail label="Receipt No." value={formData.tnea_pay_rec_no} />
@@ -704,9 +746,52 @@ function FinalReview() {
                     </div>
                 </div>
             </div>
-            <div>
-                <input className='submit-btn' type='submit' value="Submit" onClick={handleSubmit} />
+
+            <div className='details-card'>
+                <div className="detail-header">
+                    <div>PAYMENT DETAILS</div>
+                    <div><input className='button' type='button' value="Edit" onClick={() => { navigate('/payment_details', { state: { fromFinal: true } }) }} /></div>
+                </div>
+                <hr className='detail-header-line'></hr>
+                <div className='details-container'>
+                    <div className='detail-row'>
+                        <ProtectedComponent users={['admin', 'manager']}>
+                            <Detail label="Token Number" value={paymentData.token_number} />
+                        </ProtectedComponent>
+                        <Detail label="TFC Initial Payment" value={paymentData.tfc_initial_payment} />
+                        <Detail label="Amount" value={paymentData.amount} />
+                        <Detail label="Payment Method" value={paymentData.payment_method} />
+
+                        {/* Conditional fields based on payment method */}
+                        {paymentData.payment_method === 'demand draft' && (
+                            <>
+                                <Detail label="Bank Name" value={paymentData.bank_name} />
+                                <Detail label="DD Date" value={paymentData.dd_date} />
+                                <Detail label="DD Number" value={paymentData.dd_number} />
+                            </>
+                        )}
+
+                        {(paymentData.payment_method === 'card swipe' || paymentData.payment_method === 'online payment') && (
+                            <Detail label="Reference Number" value={paymentData.reference_number} />
+                        )}
+
+                        {paymentData.payment_method === 'cash' && (
+                            <Detail label="PAN" value={paymentData.pan} />
+                        )}
+                    </div>
+                </div>
             </div>
+
+            <ProtectedComponent users={['admin', 'manager']}>
+                <div>
+                    <input className='submit-btn' type='submit' value="Submit" onClick={handleSubmit} />
+                </div>
+            </ProtectedComponent>
+            <ProtectedComponent users={['GOVERNMENT', 'MANAGEMENT']}>
+                <div>
+                    <input className='submit-btn' type='button' value="Freeze" onClick={() => {navigate('/success')}} />
+                </div>
+            </ProtectedComponent>
         </div>
     )
 }

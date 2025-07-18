@@ -16,6 +16,7 @@ function Pagination() {
         '/scholarship_details',
         '/mark_details',
         '/additional_details',
+        '/payment_details',
     ]
 
     if (auth?.role === 'MANAGEMENT') {

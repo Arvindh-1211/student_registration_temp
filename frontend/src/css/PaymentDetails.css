@@ -1,0 +1,130 @@
+/* Payment Details Styles */
+.payment-details-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Payment Methods Section */
+.payment-methods-section {
+    margin-top: 20px;
+}
+
+.payment-methods-title {
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Payment Method Selection - styled like regular form fields */
+.payment-method-selection {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.payment-method-selection-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.payment-method-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    min-height: 44px;
+    align-items: center;
+}
+
+.payment-method-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.payment-method-checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #007bff;
+}
+
+.payment-method-label {
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.payment-method-label:hover {
+    color: #007bff;
+}
+
+/* Payment Method Sections - removed background and container styling */
+.payment-method-section {
+    margin-bottom: 20px;
+}
+
+.payment-method-section-title {
+    margin: 0 0 15px 0;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #333;
+    padding-bottom: 5px;
+}
+
+/* No Fees Message - styled like regular field */
+.no-fees-message {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #28a745;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-bottom: 20px;
+}
+
+.no-fees-text {
+    color: #28a745;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Total Amount Display - styled like regular field */
+.total-amount-display {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.total-amount-text {
+    color: #007bff;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .payment-method-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .payment-details-container {
+        padding: 10px;
+    }
+}

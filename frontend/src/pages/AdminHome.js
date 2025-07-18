@@ -8,6 +8,8 @@ import Error from '../Components/Error'
 import services from '../services/services'
 import EditUserModal from '../Components/EditUserModal'
 import AddStudent from '../Components/AddStudent'
+import { set } from 'react-hook-form'
+import NewApplicationModal from '../Components/NewApplicationModal'
 
 function AdminHome() {
     const [studentDetails, setStudentDetails] = useState([])
@@ -17,8 +19,11 @@ function AdminHome() {
 
     // State for EditUserModal
     const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false)
-    const [isAddStudentDetailsOpen, setIsAddStudentDetailsOpen] = useState(false)
     const [userData, setUserData] = useState(null)
+
+    // State for NewApplicationModal
+    const [isNewApplicationModalOpen, setIsNewApplicationModalOpen] = useState(false)
+    const [newApplicationData, setNewApplicationData] = useState(null)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,6 +49,11 @@ function AdminHome() {
         setIsEditUserModalOpen(true)
     }
 
+    const handleStudentDetailsTableClick = (rowData) => {
+        setNewApplicationData(rowData)
+        setIsNewApplicationModalOpen(true)
+    }
+
     return (
         <div>
             {isLoading && <Loading />}
@@ -60,7 +70,8 @@ function AdminHome() {
             <AddStudent />
             <ImportStudent />
             <div className='form-container'>
-                <Table tableData={studentDetails} title={'Student Details'} />
+                <Table tableData={studentDetails} title={'Student Details'} onRowClick={handleStudentDetailsTableClick} />
+                {isNewApplicationModalOpen && <NewApplicationModal applicationData={newApplicationData} isOpen={isNewApplicationModalOpen} setIsOpen={setIsNewApplicationModalOpen} />}
             </div>
         </div>
     )
