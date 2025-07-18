@@ -500,12 +500,14 @@ class StudentRegController {
                 fields.acad_yr_id = acad_yr_id[0][0].acc_year_id
 
                 try {
+                    const keys = Object.keys(fields);
+                    const values = Object.values(fields).map(v => v === null ? 'NULL' : `'${v}'`);
                     const sql = `
                                 INSERT INTO pre_student_register (
-                                ${Object.keys(fields).join(', ')}
+                                    ${keys.join(', ')}
                                 )
                                 VALUES(
-                                '${Object.values(fields).join("', '")}'
+                                    ${values.join(', ')}
                                 )
                             `
 
@@ -527,13 +529,47 @@ class StudentRegController {
         sql = `SELECT * FROM pre_student_register WHERE tnea_app_no = '${username}' AND stu_mobile_no = '${password}'`
 
         result = await camps.query(sql);
+        result = result[0][0];
 
-        const user = result[0][0];
+        // Insert values into admission_payment_details table
+        if (!userAlreadyExists) {
+            let courseName = await camps.query(`SELECT course_code FROM course_master WHERE course_id='${result.course_id}'`)
+            courseName = courseName[0][0]['course_code'];
+            let branchName = await camps.query(`SELECT branch_name FROM branch_master WHERE branch_id='${result.branch_id}'`)
+            branchName = branchName[0][0]['branch_name'];
+
+            const admissionPaymentFields = {
+                pre_student_register_sno: result.sno,
+                seat_category: result.seat_cat,
+                application_id: (result.tnea_app_no || '').replace(/\D/g, ''),
+                year: result.year_of_study,
+                branch: courseName + branchName,
+                student_name: result.student_name + ' ' + result.initial,
+                mobile_number: result.stu_mobile_no,
+                first_graduate: result.adm_sch_name1 === "FIRST GRADUATE." ? 'yes' : 'no',
+                inserted_by: result.tnea_app_no,
+                inserted_at: new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
+            }
+
+            try {
+                const admissionPaymentSql = `
+                        INSERT INTO admission_payment_details (${Object.keys(admissionPaymentFields).join(', ')})
+                        VALUES('${Object.values(admissionPaymentFields).join("', '")}')
+                    `
+                await camps.query(admissionPaymentSql);
+            } catch (error) {
+                console.error(`Error inserting admission payment details: ${error}`);
+                return res.status(500).json({ error: "Unable to insert admission payment details" });
+            }
+        }
+
+        // User details from pre_student_register
+        const user = result;
 
         if (user) {
             res.json({ application_no: user.sno })
         } else {
-            res.status(400).json({ message: "Unable to create new application" });
+            res.status(500).json({ message: "Unable to create new application" });
         }
     }
 
@@ -731,7 +767,7 @@ class StudentRegController {
         try {
             const application_no = req.params.application_no; // Get from route params
 
-            let sql = `SELECT sno FROM admission_payment_details WHERE application_no = ?`;
+            let sql = `SELECT sno FROM admission_payment_details WHERE pre_student_register_sno = ?`;
             const isPresent = await camps.query(sql, [application_no]);
 
             if (!isPresent[0][0]) {
@@ -739,8 +775,8 @@ class StudentRegController {
                 req.body.application_no = application_no; // Add application_no to body
                 req.body.inserted_by = req.user.user_id;
                 req.body.inserted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                
-                req.body.dd_date? req.body.dd_date = new Date(req.body.dd_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.dd_date = null;
+
+                req.body.dd_date ? req.body.dd_date = new Date(req.body.dd_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.dd_date = null;
 
                 const fields = Object.keys(req.body).join(', ');
                 const placeholders = Object.keys(req.body).map(() => '?').join(', ');
@@ -759,7 +795,7 @@ class StudentRegController {
                 req.body.updated_by = req.user.user_id;
                 req.body.updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-                req.body.dd_date? req.body.dd_date = new Date(req.body.dd_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.dd_date = null;
+                req.body.dd_date ? req.body.dd_date = new Date(req.body.dd_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.dd_date = null;
 
                 // Remove fields that shouldn't be updated
                 const { inserted_at, inserted_by, ...updateData } = req.body;
@@ -769,12 +805,12 @@ class StudentRegController {
                     if (value === undefined || value === null || value === '') {
                         return null;
                     }
-                    return value; 
+                    return value;
                 });
 
                 const setClause = updateFields.map(field => `${field} = ?`).join(', ');
 
-                sql = `UPDATE admission_payment_details SET ${setClause} WHERE application_no = ?`;
+                sql = `UPDATE admission_payment_details SET ${setClause} WHERE pre_student_register_sno = ?`;
                 await camps.query(sql, [...updateValues, application_no]);
             }
 
@@ -797,7 +833,7 @@ class StudentRegController {
             const sql = `
             SELECT ${fields}
             FROM admission_payment_details
-            WHERE pre_student_register_id = ${applicationNo}
+            WHERE pre_student_register_sno = ${applicationNo}
         `;
 
             const result = await camps.query(sql)

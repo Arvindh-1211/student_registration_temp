@@ -415,7 +415,7 @@ class AuthController {
                     branchName = branchName[0][0]['branch_name'];
 
                     const admissionPaymentFields = {
-                        pre_student_register_id: result.sno,
+                        pre_student_register_sno: result.sno,
                         seat_category: result.seat_cat,
                         application_id: (result.tnea_app_no || '').replace(/\D/g, ''),
                         year: result.year_of_study,

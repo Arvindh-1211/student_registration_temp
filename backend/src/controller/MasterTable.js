@@ -29,6 +29,7 @@ class MasterTableController {
         "university_id": { data_id: 'university_id', data: 'university_name', data_master: 'university_master' },
         "student_cat_id": { data_id: 'stu_cat_id', data: 'stu_cat', data_master: 'student_category' },
         "boarding_point": { data_id: 'boarding_point_id', data: 'boarding_point', data_master: 'tr_boardingpoint_master' },
+        "bank_name": { id: 'bank_id', data: 'bank_name', data_master: 'admission_bank_master' },
     }
 
     getOptions = async (req, res) => {
@@ -75,6 +76,24 @@ class MasterTableController {
                 const data_master = this.options[req.params.option].data_master
     
                 const sql = `SELECT ${data_id}, ${data} FROM Transport.${data_master} WHERE status = 1`
+                const results = await camps.query(sql)
+                const response = results[0].reduce((acc, item) => {
+                    acc[item[data_id]] = item[data];
+                    return acc;
+                }, {});
+                res.json(response);
+            } catch (error) {
+                res.status(500).send({ error: `Error fetching ${req.params.option} from CAMPS`, message: error.message });
+            } finally {
+                return
+            }
+        } else if(req.params.option == 'bank_name'){
+            try {
+                const data_id = this.options[req.params.option].data_id
+                const data = this.options[req.params.option].data
+                const data_master = this.options[req.params.option].data_master
+    
+                const sql = `SELECT ${data_id}, ${data} FROM ${data_master} WHERE status = 1`
                 const results = await camps.query(sql)
                 const response = results[0].reduce((acc, item) => {
                     acc[item[data_id]] = item[data];
