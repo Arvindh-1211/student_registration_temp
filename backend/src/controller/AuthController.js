@@ -376,12 +376,14 @@ class AuthController {
                         fields.acad_yr_id = acad_yr_id[0][0].acc_year_id
 
                         try {
+                            const keys = Object.keys(fields);
+                            const values = Object.values(fields).map(v => v === null ? 'NULL' : `'${v}'`);
                             const sql = `
                                 INSERT INTO pre_student_register (
-                                ${Object.keys(fields).join(', ')}
+                                    ${keys.join(', ')}
                                 )
                                 VALUES(
-                                '${Object.values(fields).join("', '")}'
+                                    ${values.join(', ')}
                                 )
                             `
 
@@ -402,12 +404,15 @@ class AuthController {
 
                 sql = `SELECT * FROM pre_student_register WHERE tnea_app_no = '${username}' AND stu_mobile_no = '${atob(password)}'`
 
-                result = await camps.query(sql)[0][0];
+                result = await camps.query(sql);
+                result = result[0][0];
 
                 // Insert values into admission_payment_details table
                 if (!userAlreadyExists) {
-                    const courseName = camps.query(`SELECT course_code FROM course_master WHERE course_id='${result.course_id}'`)[0][0]['course_code'];
-                    const branchName = camps.query(`SELECT branch_name FROM branch_master WHERE branch_id='${result.branch_id}'`)[0][0]['branch_name'];
+                    let courseName = await camps.query(`SELECT course_code FROM course_master WHERE course_id='${result.course_id}'`)
+                    courseName = courseName[0][0]['course_code'];
+                    let branchName = await camps.query(`SELECT branch_name FROM branch_master WHERE branch_id='${result.branch_id}'`)
+                    branchName = branchName[0][0]['branch_name'];
 
                     const admissionPaymentFields = {
                         pre_student_register_id: result.sno,
@@ -416,7 +421,7 @@ class AuthController {
                         year: result.year_of_study,
                         branch: courseName + branchName,
                         student_name: result.student_name + ' ' + result.initial,
-                        mobile: result.stu_mobile_no,
+                        mobile_number: result.stu_mobile_no,
                         first_graduate: result.adm_sch_name1 === "FIRST GRADUATE." ? 'yes' : 'no',
                         inserted_by: result.tnea_app_no,
                         inserted_at: new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
@@ -429,7 +434,7 @@ class AuthController {
                     `
                         await camps.query(admissionPaymentSql);
                     } catch (error) {
-                        console.error(`Error inserting admission payment details: ${error.message}`);
+                        console.error(`Error inserting admission payment details: ${error}`);
                         return res.status(500).json({ error: "Unable to insert admission payment details" });
                     }
                 }
