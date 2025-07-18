@@ -219,15 +219,20 @@ function FinalReview() {
     })
 
     const [paymentData, setPaymentData] = useState({
-        tfc_initial_payment: '',
-        payment_method: '',
-        pan: '',
-        bank_name: '',
-        dd_date: '',
-        dd_number: '',
-        reference_number: '',
-        amount: '',
-    })
+        token_number: null,
+        tfc_initial_payment: null,
+        // Payment method arrays to support multiple payments
+        fee_payment_option: [],
+        // Individual payment details
+        dd_amount: null,
+        dd_bank_name: null,
+        dd_date: null,
+        dd_number: null,
+        card_swipe_amount: null,
+        card_swipe_reference_no: null,
+        online_pay_amount: null,
+        online_pay_reference_no: null,
+    });
 
     useEffect(() => {
         let fetchedData
@@ -260,20 +265,48 @@ function FinalReview() {
         }
 
         const getPaymentDetails = async () => {
-            const queryParams = Object.keys(paymentData).join(',')
-            const response = await services.getPaymentDetails(applicationNo, queryParams)
-            setPaymentData(response)
+            try {
+                const queryParams = Object.keys(formData).join(",");
+                const fetchedData = await services.getPaymentDetails(
+                    applicationNo,
+                    queryParams
+                );
 
-            // Format dd_date if it exists
-            if (response.dd_date) {
-                let dd_date = new Date(response.dd_date).toLocaleDateString('ja-JP', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                }).replace(/\//g, '-')
-                setPaymentData((prevData) => ({ ...prevData, dd_date: dd_date }))
+                // Add null check for fetchedData
+                if (!fetchedData) {
+                    console.warn(
+                        "No payment details found for application:",
+                        applicationNo
+                    );
+                    return;
+                }
+
+                // Convert SET field from database to array for multi-select
+                if (fetchedData.fee_payment_option) {
+                    const paymentMethodsArray = fetchedData.fee_payment_option
+                        .split(",")
+                        .map((method) => method.trim());
+                    fetchedData.fee_payment_option = paymentMethodsArray;
+                }
+
+                if (fetchedData.dd_date) {
+                    let ddDate = new Date(fetchedData.dd_date)
+                        .toLocaleDateString("ja-JP", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                        })
+                        .replace(/\//g, "-");
+                    fetchedData.dd_date = ddDate;
+                }
+
+
+                setPaymentData(fetchedData);
+            } catch (error) {
+                console.error("Error fetching payment details:", error);
+                setError("Error fetching payment details!");
             }
-        }
+        };
 
         const getValue = async () => {
             if (fetchedData.blood_group) {
@@ -789,7 +822,7 @@ function FinalReview() {
             </ProtectedComponent>
             <ProtectedComponent users={['GOVERNMENT', 'MANAGEMENT']}>
                 <div>
-                    <input className='submit-btn' type='button' value="Freeze" onClick={() => {navigate('/success')}} />
+                    <input className='submit-btn' type='button' value="Freeze" onClick={() => { navigate('/success') }} />
                 </div>
             </ProtectedComponent>
         </div>

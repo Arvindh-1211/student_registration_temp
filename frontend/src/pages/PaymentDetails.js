@@ -61,19 +61,19 @@ function PaymentDetails() {
             try {
                 const queryParams = Object.keys(formData).join(',')
                 const fetchedData = await services.getPaymentDetails(applicationNo, queryParams)
-                
+
                 // Add null check for fetchedData
                 if (!fetchedData) {
                     console.warn('No payment details found for application:', applicationNo);
                     return;
                 }
-                
+
                 // Convert SET field from database to array for multi-select
                 if (fetchedData.fee_payment_option) {
                     const paymentMethodsArray = fetchedData.fee_payment_option.split(',').map(method => method.trim());
                     fetchedData.fee_payment_option = paymentMethodsArray;
                 }
-                
+
                 reset(fetchedData)
 
                 if (getValues('dd_date')) {
@@ -145,7 +145,7 @@ function PaymentDetails() {
             setValue('card_swipe_reference_no', null);
             setValue('online_pay_amount', null);
             setValue('online_pay_reference_no', null);
-            
+
             // Keep only "no fees" in payment methods
             setValue('fee_payment_option', ['no fees']);
         }
@@ -157,10 +157,10 @@ function PaymentDetails() {
 
         try {
             // Calculate total amount from all payment methods (excluding no_fees)
-            const totalAmount = paymentMethods.includes('no fees') ? 0 : 
-                              (parseFloat(data.dd_amount) || 0) +
-                              (parseFloat(data.card_swipe_amount) || 0) +
-                              (parseFloat(data.online_pay_amount) || 0);
+            const totalAmount = paymentMethods.includes('no fees') ? 0 :
+                (parseFloat(data.dd_amount) || 0) +
+                (parseFloat(data.card_swipe_amount) || 0) +
+                (parseFloat(data.online_pay_amount) || 0);
 
             const submissionData = {
                 ...data,
@@ -197,7 +197,7 @@ function PaymentDetails() {
 
     const handlePaymentMethodChange = (method) => {
         const currentMethods = getValues('fee_payment_option') || [];
-        
+
         if (method === 'no fees') {
             if (currentMethods.includes('no fees')) {
                 // If "no fees" is already selected, unselect it (allow deselection)
@@ -209,7 +209,7 @@ function PaymentDetails() {
         } else {
             // If any other method is selected, remove "no fees"
             let updatedMethods = currentMethods.filter(m => m !== 'no fees');
-            
+
             if (updatedMethods.includes(method)) {
                 // Remove the method if it's already selected
                 updatedMethods = updatedMethods.filter(m => m !== method);
@@ -217,7 +217,7 @@ function PaymentDetails() {
                 // Add the method if it's not selected
                 updatedMethods.push(method);
             }
-            
+
             setValue('fee_payment_option', updatedMethods);
         }
     };
@@ -380,11 +380,11 @@ function PaymentDetails() {
                             required
                         />
                     </ProtectedComponent>
-                    <InputField
+                    <DropDown
                         label="TFC Initial Payment"
-                        registerProps={register("tfc_initial_payment")}
-                        type="number"
-                        step="0.01"
+                        options={{'0':'0', '5000':'5000', '25000':'25000', '300000':'300000'}}
+                        fieldname={"tfc_initial_payment"}
+                        formcontrol={control}
                         // error={errors.tfc_initial_payment && errors.tfc_initial_payment.message}
                         required
                     />

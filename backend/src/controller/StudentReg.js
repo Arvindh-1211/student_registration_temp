@@ -792,8 +792,8 @@ class StudentRegController {
 
             } else {
                 // Update existing record
-                req.body.updated_by = req.user.user_id;
-                req.body.updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                req.body.modified_by = req.user.user_id;
+                req.body.modified_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
                 req.body.dd_date ? req.body.dd_date = new Date(req.body.dd_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.dd_date = null;
 
