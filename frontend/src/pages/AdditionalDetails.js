@@ -94,6 +94,26 @@ function AdditionalDetails() {
         data = { ...data, appl_no: applicationNo }
         try {
             const response = await services.insertStudentAdditionalDet(data)
+
+            if(data.college_bus === "Yes") {
+                if (!data.boarding_point) {
+                    setError("Please select a boarding point!")
+                    setIsLoading(false)
+                    return;
+                }
+                else {
+                    // Update boarding point in payment details if college_bus is "Yes"
+                    const updtePaymentDet = await services.updatePaymentDetails(applicationNo, { boarding_point: data.boarding_point });
+                    if (!updtePaymentDet?.status === 200) {
+                        setError("Error updating boarding point in payment details!")
+                        setIsLoading(false)
+                        return;
+                    }
+                }
+            } else {
+                data.boarding_point = null; // Ensure boarding_point is null if college_bus is "No"
+            }
+
             if (response.status === 200) {
                 if (location.state && location.state.fromFinal) {
                     navigate('/final_review')

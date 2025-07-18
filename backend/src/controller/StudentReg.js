@@ -533,17 +533,14 @@ class StudentRegController {
 
         // Insert values into admission_payment_details table
         if (!userAlreadyExists) {
-            let courseName = await camps.query(`SELECT course_code FROM course_master WHERE course_id='${result.course_id}'`)
-            courseName = courseName[0][0]['course_code'];
-            let branchName = await camps.query(`SELECT branch_name FROM branch_master WHERE branch_id='${result.branch_id}'`)
-            branchName = branchName[0][0]['branch_name'];
 
             const admissionPaymentFields = {
                 pre_student_register_sno: result.sno,
                 seat_category: result.seat_cat,
                 application_id: (result.tnea_app_no || '').replace(/\D/g, ''),
                 year: result.year_of_study,
-                branch: courseName + branchName,
+                branch_id: result.branch_id,
+                course_id: result.course_id,
                 student_name: result.student_name + ' ' + result.initial,
                 mobile_number: result.stu_mobile_no,
                 first_graduate: result.adm_sch_name1 === "FIRST GRADUATE." ? 'yes' : 'no',
@@ -763,56 +760,50 @@ class StudentRegController {
         }
     }
 
-    insertPaymentDetails = async (req, res) => {
+    updatePaymentDetails = async (req, res) => {
         try {
             const application_no = req.params.application_no; // Get from route params
 
-            let sql = `SELECT sno FROM admission_payment_details WHERE pre_student_register_sno = ?`;
-            const isPresent = await camps.query(sql, [application_no]);
+            // Update existing record
+            req.body.modified_by = req.user.user_id;
+            req.body.modified_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-            if (!isPresent[0][0]) {
-                // Insert new record
-                req.body.application_no = application_no; // Add application_no to body
-                req.body.inserted_by = req.user.user_id;
-                req.body.inserted_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            req.body.dd_date ? req.body.dd_date = new Date(req.body.dd_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.dd_date = null;
 
-                req.body.dd_date ? req.body.dd_date = new Date(req.body.dd_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.dd_date = null;
-
-                const fields = Object.keys(req.body).join(', ');
-                const placeholders = Object.keys(req.body).map(() => '?').join(', ');
-                const values = Object.values(req.body).map(value => {
-                    if (value === undefined || value === null || value === '') {
-                        return null;
-                    }
-                    return value;
-                });
-
-                sql = `INSERT INTO admission_payment_details (${fields}) VALUES (${placeholders})`;
-                await camps.query(sql, values);
-
-            } else {
-                // Update existing record
-                req.body.modified_by = req.user.user_id;
-                req.body.modified_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-                req.body.dd_date ? req.body.dd_date = new Date(req.body.dd_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.dd_date = null;
-
-                // Remove fields that shouldn't be updated
-                const { inserted_at, inserted_by, ...updateData } = req.body;
-
-                const updateFields = Object.keys(updateData);
-                const updateValues = Object.values(updateData).map(value => {
-                    if (value === undefined || value === null || value === '') {
-                        return null;
-                    }
-                    return value;
-                });
-
-                const setClause = updateFields.map(field => `${field} = ?`).join(', ');
-
-                sql = `UPDATE admission_payment_details SET ${setClause} WHERE pre_student_register_sno = ?`;
-                await camps.query(sql, [...updateValues, application_no]);
+            if (req.body.boarding_point) {
+                const boardingPointResults = await camps.query(
+                    `SELECT 
+                        bpm.boarding_point_id,
+                        rbm.route_id
+                    FROM 
+                        Transport.tr_boarding_point_master AS bpm
+                    JOIN 
+                        Transport.tr_rt_br_mapping AS rbm 
+                        ON bpm.boarding_point_id = rbm.boarding_point_id
+                    WHERE 
+                        bpm.boarding_point = '${req.body.boarding_point}';
+                    `
+                );
+                req.body.bus_boarding_point = boardingPointResults[0][0]?.boarding_point_id || null;
+                req.body.bus_route = boardingPointResults[0][0]?.route_id || null;
+                delete req.body.boarding_point;
             }
+
+            // Remove fields that shouldn't be updated
+            const { inserted_at, inserted_by, ...updateData } = req.body;
+
+            const updateFields = Object.keys(updateData);
+            const updateValues = Object.values(updateData).map(value => {
+                if (value === undefined || value === null || value === '') {
+                    return null;
+                }
+                return value;
+            });
+
+            const setClause = updateFields.map(field => `${field} = ?`).join(', ');
+
+            sql = `UPDATE admission_payment_details SET ${setClause} WHERE pre_student_register_sno = ?`;
+            await camps.query(sql, [...updateValues, application_no]);
 
             res.json({ message: "Payment details saved successfully" });
 

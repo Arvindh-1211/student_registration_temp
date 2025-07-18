@@ -409,17 +409,14 @@ class AuthController {
 
                 // Insert values into admission_payment_details table
                 if (!userAlreadyExists) {
-                    let courseName = await camps.query(`SELECT course_code FROM course_master WHERE course_id='${result.course_id}'`)
-                    courseName = courseName[0][0]['course_code'];
-                    let branchName = await camps.query(`SELECT branch_name FROM branch_master WHERE branch_id='${result.branch_id}'`)
-                    branchName = branchName[0][0]['branch_name'];
 
                     const admissionPaymentFields = {
                         pre_student_register_sno: result.sno,
                         seat_category: result.seat_cat,
                         application_id: (result.tnea_app_no || '').replace(/\D/g, ''),
                         year: result.year_of_study,
-                        branch: courseName + branchName,
+                        branch_id: result.branch_id,
+                        course_id: result.course_id,
                         student_name: result.student_name + ' ' + result.initial,
                         mobile_number: result.stu_mobile_no,
                         first_graduate: result.adm_sch_name1 === "FIRST GRADUATE." ? 'yes' : 'no',
