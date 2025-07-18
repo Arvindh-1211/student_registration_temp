@@ -48,9 +48,10 @@ class AuthController {
                     return res.status(200).json({ message: "Application already submitted!" });
                 }
 
+                const userAlreadyExists = result[0].length > 0;
 
                 // Insetion of new user in pre_student_register table if the user logins for the first time
-                if (result[0].length === 0) {
+                if (!userAlreadyExists) {
                     sql = `SELECT * FROM registration_user_details WHERE application_id = '${username}' AND mobile = '${atob(password)}'`
                     result = await camps.query(sql);
 
@@ -123,7 +124,7 @@ class AuthController {
                         // "regulation_id": "",
 
                         "university_id": "5",
-                        
+
                         // "student_cat_id": "",
                         // "year_of_study": "",
                         // "sem_of_study": "",
@@ -148,11 +149,11 @@ class AuthController {
                         // "parent_email_id": "",
 
                         "stu_mobile_no": row.mobile,
-                        
+
                         // "comm_phone_no": "",
-                        
+
                         "stu_email_id": row.email,
-                        
+
                         // "scholar": "",
                         // "nominee_name": "",
                         // "nominee_relation": "",
@@ -169,9 +170,9 @@ class AuthController {
                         // "tnea_pay_rec_date": "",
                         // "tnea_pay_rec_amt": "",
                         // "tnea_pay_bank": "",
-                        // "adm_sch_name1": "",
+                        "adm_sch_name1": row.first_graduate === "yes" ? "FIRST GRADUATE." : "",
                         // "adm_sch_name2": "",
-                        // "adm_sch_amt1": "",
+                        "adm_sch_amt1": row.first_graduate === "yes" ? "25000" : "",
                         // "adm_sch_amt2": "",
 
                         "physics_secured": "0",
@@ -261,7 +262,7 @@ class AuthController {
                         // "ent_reg_no": "",
 
                         "photo": "",
-                        
+
                         // "aadhar_no": ""
 
                         inserted_by: row.application_id,
@@ -333,7 +334,7 @@ class AuthController {
                         if (!fields.year_of_completion) {
                             fields.year_of_completion = fields.year_of_admission + branch_details[0][0].no_of_year
                         }
-                        
+
 
                         // Getting regulation_id
                         let year_master_id = ''
@@ -401,9 +402,40 @@ class AuthController {
 
                 sql = `SELECT * FROM pre_student_register WHERE tnea_app_no = '${username}' AND stu_mobile_no = '${atob(password)}'`
 
-                result = await camps.query(sql);
+                result = await camps.query(sql)[0][0];
 
-                const user = result[0][0];
+                // Insert values into admission_payment_details table
+                if (!userAlreadyExists) {
+                    const courseName = camps.query(`SELECT course_code FROM course_master WHERE course_id='${result.course_id}'`)[0][0]['course_code'];
+                    const branchName = camps.query(`SELECT branch_name FROM branch_master WHERE branch_id='${result.branch_id}'`)[0][0]['branch_name'];
+
+                    const admissionPaymentFields = {
+                        pre_student_register_id: result.sno,
+                        seat_category: result.seat_cat,
+                        application_id: (result.tnea_app_no || '').replace(/\D/g, ''),
+                        year: result.year_of_study,
+                        branch: courseName + branchName,
+                        student_name: result.student_name + ' ' + result.initial,
+                        mobile: result.stu_mobile_no,
+                        first_graduate: result.adm_sch_name1 === "FIRST GRADUATE." ? 'yes' : 'no',
+                        inserted_by: result.tnea_app_no,
+                        inserted_at: new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
+                    }
+
+                    try {
+                        const admissionPaymentSql = `
+                        INSERT INTO admission_payment_details (${Object.keys(admissionPaymentFields).join(', ')})
+                        VALUES('${Object.values(admissionPaymentFields).join("', '")}')
+                    `
+                        await camps.query(admissionPaymentSql);
+                    } catch (error) {
+                        console.error(`Error inserting admission payment details: ${error.message}`);
+                        return res.status(500).json({ error: "Unable to insert admission payment details" });
+                    }
+                }
+
+                // User details from pre_student_register
+                const user = result;
 
                 // Generate JWT token
                 if (user) {
