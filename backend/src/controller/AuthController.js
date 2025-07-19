@@ -377,7 +377,7 @@ class AuthController {
 
                         try {
                             const keys = Object.keys(fields);
-                            const values = Object.values(fields).map(v => v === null ? 'NULL' : `'${v}'`);
+                            const values = Object.values(fields).map(v => v === null || v==="" ? 'NULL' : `'${v}'`);
                             const sql = `
                                 INSERT INTO pre_student_register (
                                     ${keys.join(', ')}

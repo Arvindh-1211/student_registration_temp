@@ -61,6 +61,7 @@ function PaymentDetails() {
     const cardAmount = watch('card_swipe_amount');
     const onlineAmount = watch('online_pay_amount');
     const partialPayment = watch('partial_payment');
+    const tfcInitialPayment = watch('tfc_initial_payment');
 
     useEffect(() => {
         const getDefaultValues = async () => {
@@ -99,6 +100,13 @@ function PaymentDetails() {
                     }).replace(/\//g, '-')
                     setValue('partial_payment_date', partialDate)
                 }
+
+                if(getValues('tfc_initial_payment') === null || getValues('tfc_initial_payment') === '') {
+                    setValue('tfc_initial_payment', '0')
+                }
+                else if(getValues('tfc_initial_payment')) {
+                    setValue('tfc_initial_payment', parseInt(getValues('tfc_initial_payment'), 10))
+                }
             } catch (error) {
                 console.error('Error fetching payment details:', error);
                 setError("Error fetching payment details!");
@@ -131,7 +139,7 @@ function PaymentDetails() {
             try {
                 const response = await services.getTotalFees(applicationNo);
                 if (response) {
-                    setFeesToPay(response.total_fees);
+                    setFeesToPay(response.total_fee);
                 } else {
                     setError("Error fetching total fees!");
                 }
@@ -190,7 +198,8 @@ function PaymentDetails() {
             const totalAmount = paymentMethods.includes('no fees') ? 0 :
                 (parseFloat(data.dd_amount) || 0) +
                 (parseFloat(data.card_swipe_amount) || 0) +
-                (parseFloat(data.online_pay_amount) || 0);
+                (parseFloat(data.online_pay_amount) || 0) +
+                (parseFloat(data.tfc_initial_payment) || 0)
 
             const submissionData = {
                 ...data,
@@ -227,7 +236,8 @@ function PaymentDetails() {
             const totalAmount = paymentMethods.includes('no fees') ? 0 :
                 (parseFloat(data.dd_amount) || 0) +
                 (parseFloat(data.card_swipe_amount) || 0) +
-                (parseFloat(data.online_pay_amount) || 0);
+                (parseFloat(data.online_pay_amount) || 0) +
+                (parseFloat(data.tfc_initial_payment) || 0)
 
             // Check if total amount is sufficient or if partial payment is allowed
             const canApprove = totalAmount >= feesToPay || data.partial_payment;
@@ -303,7 +313,9 @@ function PaymentDetails() {
         return paymentMethods.includes('no fees') ? 0 :
             (parseFloat(ddAmount) || 0) +
             (parseFloat(cardAmount) || 0) +
-            (parseFloat(onlineAmount) || 0);
+            (parseFloat(onlineAmount) || 0) +
+            (parseFloat(tfcInitialPayment) || 0)
+
     };
 
     const renderPaymentMethodFields = () => {

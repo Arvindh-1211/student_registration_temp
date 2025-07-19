@@ -502,7 +502,7 @@ class StudentRegController {
 
                 try {
                     const keys = Object.keys(fields);
-                    const values = Object.values(fields).map(v => v === null ? 'NULL' : `'${v}'`);
+                    const values = Object.values(fields).map(v => v === null || v==="" ? 'NULL' : `'${v}'`);
                     const sql = `
                                 INSERT INTO pre_student_register (
                                     ${keys.join(', ')}
@@ -803,7 +803,7 @@ class StudentRegController {
 
             const setClause = updateFields.map(field => `${field} = ?`).join(', ');
 
-            sql = `UPDATE admission_payment_details SET ${setClause} WHERE pre_student_register_sno = ?`;
+            const sql = `UPDATE admission_payment_details SET ${setClause} WHERE pre_student_register_sno = ?`;
             await camps.query(sql, [...updateValues, application_no]);
 
             res.json({ message: "Payment details saved successfully" });
