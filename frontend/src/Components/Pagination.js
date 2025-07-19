@@ -23,13 +23,17 @@ function Pagination() {
         routes.splice(routes.indexOf('/tnea_details'), 1)
     }
 
+    if(auth?.role === 'MANAGEMENT' || auth?.role === 'GOVERNMENT' ){
+        routes.splice(routes.indexOf('/payment_details'), 1)
+    }
+
     return (
         routes.includes(location.pathname) &&
         (
             < div className='paginationContainer' >
                 <div className='pagination'>
                     {routes.map((route, index) => {
-                        const isClickable = auth?.role === 'admin' || auth?.role === 'manager';
+                        const isClickable = auth?.role === 'admin' || auth?.role === 'manager' || auth?.role === 'accounts_manager' ;
                         return (
                             <NavLink
                                 key={index + 1}

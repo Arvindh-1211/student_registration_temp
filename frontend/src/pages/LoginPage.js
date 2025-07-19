@@ -65,7 +65,7 @@ function LoginPage() {
             const response = await authServices.login({ email: decodedPayload.email, loginType: 'google' })
             if (response) {
                 dispatch(setAuth({ ...response, name: decodedPayload.name }))
-                if (response.role === 'admin' || response.role === 'manager') {
+                if (response.role === 'admin' || response.role === 'manager' || response.role === 'accounts_manager') {
                     setIsLoading(false)
                     navigate('/home')
                 }

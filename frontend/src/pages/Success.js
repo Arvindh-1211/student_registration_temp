@@ -11,7 +11,7 @@ function Success() {
     const campsApplNo = useSelector((state) => state.applicationNo.campsApplNo)
 
     useEffect(() => {
-        if (!campsApplNo && auth && ['admin', 'manager'].includes(auth.role)) {
+        if (!campsApplNo && auth && ['admin', 'manager', 'accounts_manager'].includes(auth.role)) {
             navigate('/personal_details')
         }
     }, [])

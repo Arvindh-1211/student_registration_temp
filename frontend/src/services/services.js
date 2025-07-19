@@ -188,6 +188,16 @@ const getIncompleteApplications = async () => {
     }
 }
 
+const getPaymentNotVerifiedApplications = async () => {
+    try {
+        const response = await apiInstance.get(`/payment_not_verified_applications`)
+        return response.data
+    } catch (error) {
+        console.log("Cannot fetch incomplete applications")
+        throw error
+    }
+}
+
 const deleteApplication = async (applicationNo) => {
     try {
         const response = await apiInstance.delete(`/incomplete_application/${applicationNo}`)
@@ -217,6 +227,7 @@ const services = {
     deleteUser,
     getSubmittedApplications,
     getIncompleteApplications,
+    getPaymentNotVerifiedApplications,
     deleteApplication
 };
 

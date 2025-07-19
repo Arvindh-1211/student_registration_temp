@@ -19,6 +19,7 @@ function AdditionalDetails() {
     const navigate = useNavigate();
     const location = useLocation()
 
+    const auth = useSelector((state) => state.auth)
     const applicationNo = useSelector((state) => state.applicationNo.value)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -95,7 +96,7 @@ function AdditionalDetails() {
         try {
             const response = await services.insertStudentAdditionalDet(data)
 
-            if(data.college_bus === "Yes") {
+            if (data.college_bus === "Yes") {
                 if (!data.boarding_point) {
                     setError("Please select a boarding point!")
                     setIsLoading(false)
@@ -116,6 +117,8 @@ function AdditionalDetails() {
 
             if (response.status === 200) {
                 if (location.state && location.state.fromFinal) {
+                    navigate('/final_review')
+                } else if (auth?.role === 'MANAGEMENT' || auth?.role === 'GOVERNMENT') {
                     navigate('/final_review')
                 } else {
                     navigate('/payment_details')

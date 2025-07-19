@@ -98,7 +98,7 @@ function ImportStudent() {
             });
 
             // Check if the modifiedData has all required fields
-            const requiredFields = ['application_id', 'name', 'branch', 'community', 'gender', 'email', 'mobile'];
+            const requiredFields = ['application_id', 'name', 'branch', 'community', 'gender', 'email', 'mobile', 'first_graduate'];
             const hasAllRequiredFields = (data) => {
                 if (!data || data.length === 0) return false;
                 const keys = Object.keys(data[0]);
@@ -108,7 +108,6 @@ function ImportStudent() {
                 setError("Some columns are missing");
                 return;
             }
-
 
             const response = await services.importStudent(modifiedData)
 
@@ -160,7 +159,7 @@ function ImportStudent() {
                                             <AiOutlineCloudUpload className='upload-icon' />
                                             <p className="upload-text"><span className="upload-text-bold">Click to upload</span></p>
                                             <p className="upload-text-small">*File supported - .xlsx</p>
-                                            <p className="upload-text-small">*Required Columns - Application Id, Name, Branch, Community, Gender, Email, Mobile</p>
+                                            <p className="upload-text-small">*Required Columns - Application Id, Name, Branch, Community, Gender, Email, Mobile, First Graduate</p>
                                         </>
                                     }
                                 </div>

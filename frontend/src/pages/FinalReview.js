@@ -232,6 +232,9 @@ function FinalReview() {
         card_swipe_reference_no: null,
         online_pay_amount: null,
         online_pay_reference_no: null,
+        partial_payment: null,
+        partial_payment_date: null,
+        total_amount: null,
     });
 
     useEffect(() => {
@@ -266,7 +269,7 @@ function FinalReview() {
 
         const getPaymentDetails = async () => {
             try {
-                const queryParams = Object.keys(formData).join(",");
+                const queryParams = Object.keys(paymentData).join(",");
                 const fetchedData = await services.getPaymentDetails(
                     applicationNo,
                     queryParams
@@ -298,6 +301,17 @@ function FinalReview() {
                         })
                         .replace(/\//g, "-");
                     fetchedData.dd_date = ddDate;
+                }
+
+                if (fetchedData.partial_payment_date) {
+                    let partialPaymentDate = new Date(fetchedData.partial_payment_date)
+                        .toLocaleDateString("ja-JP", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                        })
+                        .replace(/\//g, "-");
+                    fetchedData.partial_payment_date = partialPaymentDate;
                 }
 
 
@@ -474,7 +488,7 @@ function FinalReview() {
         try {
 
             // Check if admin or manager has enetered token_number, payment_method in payment details
-            if (auth && ['admin', 'manager'].includes(auth.role)) {
+            if (auth && ['admin', 'manager', 'accounts_manager'].includes(auth.role)) {
                 if (!paymentData.token_number || !paymentData.payment_method) {
                     setError("Payment not yet verified!")
                     setIsLoading(false)
@@ -780,45 +794,82 @@ function FinalReview() {
                 </div>
             </div>
 
-            <div className='details-card'>
-                <div className="detail-header">
-                    <div>PAYMENT DETAILS</div>
-                    <div><input className='button' type='button' value="Edit" onClick={() => { navigate('/payment_details', { state: { fromFinal: true } }) }} /></div>
-                </div>
-                <hr className='detail-header-line'></hr>
-                <div className='details-container'>
-                    <div className='detail-row'>
-                        <ProtectedComponent users={['admin', 'manager']}>
-                            <Detail label="Token Number" value={paymentData.token_number} />
-                        </ProtectedComponent>
-                        <Detail label="TFC Initial Payment" value={paymentData.tfc_initial_payment} />
-                        <Detail label="Amount" value={paymentData.amount} />
-                        <Detail label="Payment Method" value={paymentData.payment_method} />
+            <ProtectedComponent users={['admin', 'manager', 'accounts_manager']}>
 
-                        {/* Conditional fields based on payment method */}
-                        {paymentData.payment_method === 'demand draft' && (
-                            <>
-                                <Detail label="Bank Name" value={paymentData.bank_name} />
-                                <Detail label="DD Date" value={paymentData.dd_date} />
-                                <Detail label="DD Number" value={paymentData.dd_number} />
-                            </>
-                        )}
+                <div className='details-card'>
+                    <div className="detail-header">
+                        <div>PAYMENT DETAILS</div>
+                        <div><input className='button' type='button' value="Edit" onClick={() => { navigate('/payment_details', { state: { fromFinal: true } }) }} /></div>
+                    </div>
+                    <hr className='detail-header-line'></hr>
+                    <div className='details-container'>
+                        <div className='detail-row'>
+                            <ProtectedComponent users={['admin', 'manager', 'accounts_manager']}>
+                                <Detail label="Token Number" value={paymentData.token_number} />
+                            </ProtectedComponent>
+                            <Detail label="TFC Initial Payment" value={paymentData.tfc_initial_payment} />
 
-                        {(paymentData.payment_method === 'card swipe' || paymentData.payment_method === 'online payment') && (
-                            <Detail label="Reference Number" value={paymentData.reference_number} />
-                        )}
+                            {/* Display Payment Methods */}
+                            <Detail
+                                label="Payment Methods"
+                                value={paymentData.fee_payment_option && paymentData.fee_payment_option.length > 0
+                                    ? paymentData.fee_payment_option.join(', ').replace(/,/g, ', ').replace(/\b\w/g, l => l.toUpperCase())
+                                    : 'Not selected'
+                                }
+                            />
 
-                        {paymentData.payment_method === 'cash' && (
-                            <Detail label="PAN" value={paymentData.pan} />
-                        )}
+                            {/* Demand Draft Details */}
+                            {paymentData.fee_payment_option?.includes('demand draft') && (
+                                <>
+                                    <Detail label="DD Amount" value={paymentData.dd_amount ? `₹${parseFloat(paymentData.dd_amount).toFixed(2)}` : null} />
+                                    <Detail label="DD Bank Name" value={paymentData.dd_bank_name} />
+                                    <Detail label="DD Date" value={paymentData.dd_date} />
+                                    <Detail label="DD Number" value={paymentData.dd_number} />
+                                </>
+                            )}
+
+                            {/* Card Swiping Details */}
+                            {paymentData.fee_payment_option?.includes('card swiping') && (
+                                <>
+                                    <Detail label="Card Swipe Amount" value={paymentData.card_swipe_amount ? `₹${parseFloat(paymentData.card_swipe_amount).toFixed(2)}` : null} />
+                                    <Detail label="Card Reference Number" value={paymentData.card_swipe_reference_no} />
+                                </>
+                            )}
+
+                            {/* Online Payment Details */}
+                            {paymentData.fee_payment_option?.includes('online payment') && (
+                                <>
+                                    <Detail label="Online Payment Amount" value={paymentData.online_pay_amount ? `₹${parseFloat(paymentData.online_pay_amount).toFixed(2)}` : null} />
+                                    <Detail label="Online Reference Number" value={paymentData.online_pay_reference_no} />
+                                </>
+                            )}
+
+                            {/* Partial Payment Details - Only for accounts_manager */}
+                            <Detail label="Partial Payment Allowed" value={paymentData.partial_payment ? 'Yes' : 'No'} />
+                            {paymentData.partial_payment && paymentData.partial_payment_date && (
+                                <Detail label="Partial Payment Date" value={paymentData.partial_payment_date} />
+                            )}
+
+                            {/* Fee Exemption Message */}
+                            {paymentData.fee_payment_option?.includes('no fees') && (
+                                <Detail label="Fee Status" value="Fee Exemption Applied - No Payment Required" />
+                            )}
+
+                            {/* Total Amount Calculation */}
+                            {paymentData.fee_payment_option && paymentData.fee_payment_option.length > 0 && !paymentData.fee_payment_option.includes('no fees') && (
+                                <Detail
+                                    label="Total Payment Amount"
+                                    value={`₹${paymentData.total_amount}`}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <ProtectedComponent users={['admin', 'manager']}>
                 <div>
                     <input className='submit-btn' type='submit' value="Submit" onClick={handleSubmit} />
                 </div>
+                
             </ProtectedComponent>
             <ProtectedComponent users={['GOVERNMENT', 'MANAGEMENT']}>
                 <div>

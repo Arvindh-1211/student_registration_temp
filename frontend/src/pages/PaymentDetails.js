@@ -18,13 +18,28 @@ import Error from "../Components/Error";
 import ProtectedComponent from "../Components/ProtectedComponent";
 import '../css/PaymentDetails.css';
 
+function Detail({ label, value, marks }) {
+    return (
+        <div className='detail'>
+            <span className='detail-label'>
+                <div>{label}</div><div>:</div>
+            </span>
+            {value}
+            {marks && marks.sec && marks.max && `${parseFloat(marks.sec)} / ${parseFloat(marks.max)}`}
+        </div>
+    )
+
+}
+
 function PaymentDetails() {
     const navigate = useNavigate()
     const location = useLocation()
     const applicationNo = useSelector((state) => state.applicationNo.value)
-    const userName = useSelector((state) => state.auth?.username)
+    const userName = useSelector((state) => state.auth?.name)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+
+    const applicationData = useState(location.state.appplicationData)
 
     const [feesToPay, setFeesToPay] = useState(0);
 
@@ -47,7 +62,7 @@ function PaymentDetails() {
     }
 
     const [options, setOptions] = useState({
-        bank_name: { }
+        bank_name: {}
     });
 
     const { register, control, getValues, setValue, watch, handleSubmit, reset, formState: { errors } } = useForm({
@@ -101,10 +116,10 @@ function PaymentDetails() {
                     setValue('partial_payment_date', partialDate)
                 }
 
-                if(getValues('tfc_initial_payment') === null || getValues('tfc_initial_payment') === '') {
+                if (getValues('tfc_initial_payment') === null || getValues('tfc_initial_payment') === '') {
                     setValue('tfc_initial_payment', '0')
                 }
-                else if(getValues('tfc_initial_payment')) {
+                else if (getValues('tfc_initial_payment')) {
                     setValue('tfc_initial_payment', parseInt(getValues('tfc_initial_payment'), 10))
                 }
             } catch (error) {
@@ -172,9 +187,10 @@ function PaymentDetails() {
     }, [])
 
     // Clear all payment method fields when "no fees" is selected
+    // This useEffect was causing the issue - it was interfering with the unchecking
     useEffect(() => {
-        if (paymentMethods.includes('no fees')) {
-            // Clear all payment amounts and details
+        if (paymentMethods.includes('no fees') && paymentMethods.length > 1) {
+            // Clear all payment amounts and details only if other methods are also selected
             setValue('dd_amount', null);
             setValue('dd_bank_name', null);
             setValue('dd_date', null);
@@ -200,6 +216,9 @@ function PaymentDetails() {
                 (parseFloat(data.card_swipe_amount) || 0) +
                 (parseFloat(data.online_pay_amount) || 0) +
                 (parseFloat(data.tfc_initial_payment) || 0)
+
+            console.log(totalAmount);
+
 
             const submissionData = {
                 ...data,
@@ -233,6 +252,11 @@ function PaymentDetails() {
 
         try {
             const data = getValues();
+            const token_number = data.token_number ? parseInt(data.token_number, 10) : null;
+            if (!token_number) {
+                setError("Token number is required!");
+                return;
+            }
             const totalAmount = paymentMethods.includes('no fees') ? 0 :
                 (parseFloat(data.dd_amount) || 0) +
                 (parseFloat(data.card_swipe_amount) || 0) +
@@ -240,10 +264,10 @@ function PaymentDetails() {
                 (parseFloat(data.tfc_initial_payment) || 0)
 
             // Check if total amount is sufficient or if partial payment is allowed
-            const canApprove = totalAmount >= feesToPay || data.partial_payment;
-            
+            const canApprove = totalAmount >= feesToPay || data.partial_payment === 'yes';
+
             if (!canApprove) {
-                setError("Cannot approve: Total amount is less than required fees and partial payment is not checked!");
+                setError("Total amount is less than required fees!");
                 return;
             }
 
@@ -261,6 +285,9 @@ function PaymentDetails() {
                 alert('Payment approved successfully!');
                 if (location.state && location.state.fromFinal) {
                     navigate('/final_review')
+                }
+                else if (location.state && location.state.fromPaymentNotVerifiedApplication) {
+                    navigate('/incomplete_application')
                 } else {
                     navigate('/final_review')
                 }
@@ -287,10 +314,20 @@ function PaymentDetails() {
 
         if (method === 'no fees') {
             if (currentMethods.includes('no fees')) {
-                // If "no fees" is already selected, unselect it (allow deselection)
+                // If "no fees" is already selected, unselect it
                 setValue('fee_payment_option', []);
             } else {
                 // If "no fees" is selected, clear everything else and select only "no fees"
+                // Clear payment fields immediately when selecting "no fees"
+                setValue('dd_amount', null);
+                setValue('dd_bank_name', null);
+                setValue('dd_date', null);
+                setValue('dd_number', null);
+                setValue('card_swipe_amount', null);
+                setValue('card_swipe_reference_no', null);
+                setValue('online_pay_amount', null);
+                setValue('online_pay_reference_no', null);
+
                 setValue('fee_payment_option', ['no fees']);
             }
         } else {
@@ -438,32 +475,27 @@ function PaymentDetails() {
                 {/* Partial Payment Section - Only visible to accounts_manager */}
                 <ProtectedComponent users={['accounts_manager']}>
                     <Row>
-                        <div className="partial-payment-section">
-                            <div className="partial-payment-checkbox-container">
-                                <input
-                                    type="checkbox"
-                                    id="partial_payment"
-                                    {...register("partial_payment")}
-                                    className="partial-payment-checkbox"
-                                />
-                                <label htmlFor="partial_payment" className="partial-payment-label">
-                                    Allow Partial Payment
-                                </label>
-                            </div>
-                        </div>
-                    </Row>
-                    
-                    {/* Partial Payment Date - Only show if partial payment is checked */}
-                    {partialPayment && (
-                        <Row>
+                        <DropDown
+                            label="Allow Partial Payment"
+                            options={{
+                                'no': 'No',
+                                'yes': 'Yes'
+                            }}
+                            fieldname={"partial_payment"}
+                            formcontrol={control}
+                        // error={errors.partial_payment && errors.partial_payment.message}
+                        />
+
+                        {/* Partial Payment Date - Only show if partial payment is "yes" */}
+                        {partialPayment === 'yes' && (
                             <InputField
                                 label="Partial Payment Date"
                                 registerProps={register("partial_payment_date")}
                                 type="date"
                                 required
                             />
-                        </Row>
-                    )}
+                        )}
+                    </Row>
                 </ProtectedComponent>
 
                 {/* No Fees Message */}
@@ -486,8 +518,6 @@ function PaymentDetails() {
                                     Fees to be Paid: ₹{feesToPay.toFixed(2)}
                                 </div>
                             </div>
-                        </Row>
-                        <Row>
                             <div className={`total-amount-display ${isAmountSufficient ? 'sufficient' : 'insufficient'}`}>
                                 <div className="total-amount-text">
                                     Total Amount: ₹{totalAmount.toFixed(2)}
@@ -522,7 +552,7 @@ function PaymentDetails() {
             {error && <Error message={error} />}
             <Form handleNext={handleSubmit(onSubmit)} heading="Payment Details" handleBack={() => { navigate('/additional_details') }}>
                 <Row>
-                    <ProtectedComponent users={['admin', 'manager']}>
+                    <ProtectedComponent users={['admin', 'manager', 'accounts_manager']}>
                         <InputField
                             label="Token Number"
                             registerProps={register("token_number")}
@@ -533,7 +563,7 @@ function PaymentDetails() {
                     </ProtectedComponent>
                     <DropDown
                         label="TFC Initial Payment"
-                        options={{'0':'0', '5000':'5000', '25000':'25000', '300000':'300000'}}
+                        options={{ '0': '0', '5000': '5000', '25000': '25000', '300000': '300000' }}
                         fieldname={"tfc_initial_payment"}
                         formcontrol={control}
                         // error={errors.tfc_initial_payment && errors.tfc_initial_payment.message}

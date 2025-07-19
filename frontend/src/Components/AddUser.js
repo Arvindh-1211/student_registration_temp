@@ -44,7 +44,7 @@ function AddUser() {
                         />
                         <DropDown
                             label="Role"
-                            options={{ 0: 'manager', 1: 'admin' }}
+                            options={{ 0: 'manager', 1: 'admin', 2: 'accounts_manager' }}
                             fieldname={"role"}
                             formcontrol={control}
                             storeLabel={true}

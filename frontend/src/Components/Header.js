@@ -95,7 +95,7 @@ function Header() {
 				</div>
 				<div className='header-data-container'>
 					{window.innerWidth > 480 &&
-						<ProtectedComponent users={["admin", "manager"]}>
+						<ProtectedComponent users={['admin', 'manager', 'accounts_manager']}>
 							<div onClick={() => { navigate('/home')}} className='header-dropdown-menu-link'>
 								Home
 							</div>
@@ -124,7 +124,7 @@ function Header() {
 								</div>
 								<hr></hr>
 								{window.innerWidth < 480 &&
-									<ProtectedComponent users={["admin", "manager"]}>
+									<ProtectedComponent users={['admin', 'manager', 'accounts_manager']}>
 										<div>
 											<button onClick={() => { navigate('/home'); toggleDropdown(); }} className='header-dropdown-menu-btn'>
 												<MdOutlineHome className="header-dropdown-menu-icon" />

@@ -18,7 +18,7 @@ import PaymentDetails from "../pages/PaymentDetails";
 const routes = [
     {
         path: '/home',
-        element: <ProtectedRoute users={['admin', 'manager']}><AdminHome /></ProtectedRoute>
+        element: <ProtectedRoute users={['admin', 'manager', 'accounts_manager']}><AdminHome /></ProtectedRoute>
     },
     {
         path: '/',
@@ -30,7 +30,7 @@ const routes = [
     // },
     {
         path: '/incomplete_application',
-        element: <ProtectedRoute users={['admin', 'manager']}><IncompleteApplication /></ProtectedRoute>
+        element: <ProtectedRoute users={['admin', 'manager', 'accounts_manager']}><IncompleteApplication /></ProtectedRoute>
     },
     {
         path: '/personal_details',

@@ -52,17 +52,20 @@ router.route('/if_exist')
     .get(studentRegController.ifExist)
 
 router.route('/student_user_details')
-    .get(roleMiddleware(['admin', 'manager']), studentRegController.getStudentUserDetails)
-    .post(roleMiddleware(['admin', 'manager']), studentRegController.insertStudentUserDetails)
+    .get(roleMiddleware(['admin', 'manager', 'accounts_manager']), studentRegController.getStudentUserDetails)
+    .post(roleMiddleware(['admin', 'manager', 'accounts_manager']), studentRegController.insertStudentUserDetails)
 
 router.route('/submitted_application')
-    .get(roleMiddleware(['admin', 'manager']), studentRegController.getSubmittedApplication)
+    .get(roleMiddleware(['admin', 'manager', 'accounts_manager']), studentRegController.getSubmittedApplication)
 
 router.route('/incomplete_application')
-    .get(roleMiddleware(['admin', 'manager']), studentRegController.getIncompleteApplication)
+    .get(roleMiddleware(['admin', 'manager', 'accounts_manager']), studentRegController.getIncompleteApplication)
+
+router.route('/payment_not_verified_applications')
+    .get(roleMiddleware(['admin', 'manager', 'accounts_manager']), studentRegController.getPaymentNotVerifiedApplications)
 
 router.route('/incomplete_application/:application_no')
-    .delete(roleMiddleware(['admin', 'manager']), studentRegController.deleteIncompleteApplication)
+    .delete(roleMiddleware(['admin', 'manager', 'accounts_manager']), studentRegController.deleteIncompleteApplication)
 
 router.use(roleMiddleware(['admin']))
 router.route('/user')

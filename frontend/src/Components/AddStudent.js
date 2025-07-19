@@ -103,11 +103,11 @@ function AddStudent() {
 
             const response = await services.importStudent([modifiedData])
             if (response.status === 200) {
-                if(response.data.skippedCount === 0){
+                if (response.data.skippedCount === 0) {
                     alert("Student added successfully!");
                     window.location.reload(); // Reload the page to see the new student
                 }
-                else{
+                else {
                     alert(`Error adding student: ${response.data.insertionError[0] || "Unknown error"}`);
                 }
             } else {
@@ -178,6 +178,15 @@ function AddStudent() {
                         />
                     </Row>
                     <Row>
+                        <DropDown
+                            label="First Graduate"
+                            options={{ "yes": "Yes", "no": "No" }}
+                            fieldname={"first_graduate"}
+                            formcontrol={control}
+                            sorted={false}
+                            error={errors.gender && errors.gender.message}
+                            required
+                        />
                         <DropDown
                             label="Student Category"
                             options={studentCategoryOptions}

@@ -5,7 +5,7 @@ class StudentRegController {
     getSubmittedApplication = async (req, res) => {
         try {
             const sql = `
-                SELECT psr.sno, psr.application_no, psr.student_name, psr.initial, psr.father_name, psr.mother_name, psr.tnea_app_no,
+                SELECT psr.sno, psr.application_no, psr.student_name, psr.initial, psr.stu_mobile_no, psr.tnea_app_no, psr.scholar,
                     (SELECT bm.branch_name FROM branch_master bm WHERE bm.branch_id=psr.branch_id) AS branch,
                     (SELECT cm.course_code FROM course_master cm WHERE cm.course_id=psr.course_id) AS course,
                     (SELECT sc.stu_cat FROM student_category sc WHERE sc.stu_cat_id=psr.student_cat_id) AS student_cat
@@ -21,11 +21,35 @@ class StudentRegController {
     getIncompleteApplication = async (req, res) => {
         try {
             const sql = `
-                SELECT psr.sno, psr.student_name, psr.initial, psr.father_name, psr.mother_name, psr.tnea_app_no,
+                SELECT psr.sno, psr.student_name, psr.initial, psr.stu_mobile_no, psr.tnea_app_no, psr.scholar,
                     (SELECT bm.branch_name FROM branch_master bm WHERE bm.branch_id=psr.branch_id) AS branch,
                     (SELECT cm.course_code FROM course_master cm WHERE cm.course_id=psr.course_id) AS course,
                     (SELECT sc.stu_cat FROM student_category sc WHERE sc.stu_cat_id=psr.student_cat_id) AS student_cat
-                FROM pre_student_register psr WHERE psr.application_no IS NULL ORDER BY psr.sno DESC
+                FROM pre_student_register psr 
+                INNER JOIN admission_payment_details apd ON apd.pre_student_register_sno = psr.sno
+                WHERE psr.application_no IS NULL 
+                    AND apd.approved_by IS NOT NULL
+                ORDER BY psr.sno DESC
+            `;
+            const result = await camps.query(sql)
+            res.json(result[0]);
+        } catch (error) {
+            res.status(500).send({ error: 'Error fetching incomplete applications', message: error.message });
+        }
+    }
+
+    getPaymentNotVerifiedApplications = async (req, res) => {
+        try {
+            const sql = `
+                SELECT psr.sno, psr.student_name, psr.initial, psr.stu_mobile_no, psr.tnea_app_no, psr.scholar,
+                    (SELECT bm.branch_name FROM branch_master bm WHERE bm.branch_id=psr.branch_id) AS branch,
+                    (SELECT cm.course_code FROM course_master cm WHERE cm.course_id=psr.course_id) AS course,
+                    (SELECT sc.stu_cat FROM student_category sc WHERE sc.stu_cat_id=psr.student_cat_id) AS student_cat
+                FROM pre_student_register psr 
+                INNER JOIN admission_payment_details apd ON apd.pre_student_register_sno = psr.sno
+                WHERE psr.application_no IS NULL 
+                    AND apd.approved_by IS NULL
+                ORDER BY psr.sno DESC
             `;
             const result = await camps.query(sql)
             res.json(result[0]);
@@ -48,7 +72,7 @@ class StudentRegController {
 
     getStudentUserDetails = async (req, res) => {
         try {
-            const sql = `SELECT application_id, name, branch, community, gender, email, mobile, degree_level FROM registration_user_details ORDER BY inserted_on DESC`;
+            const sql = `SELECT application_id, name, branch, community, gender, email, mobile, degree_level, first_graduate FROM registration_user_details ORDER BY inserted_on DESC`;
             const result = await camps.query(sql)
             res.json(result[0]);
         } catch (error) {
@@ -68,7 +92,7 @@ class StudentRegController {
             for (let row of data) {
                 try {
                     // Filter out required fields
-                    const requiredFields = ['application_id', 'name', 'branch', 'community', 'gender', 'email', 'mobile', 'degree_level'];
+                    const requiredFields = ['application_id', 'name', 'branch', 'community', 'gender', 'email', 'mobile', 'degree_level', 'first_graduate'];
                     row = Object.fromEntries(
                         Object.entries(row).filter(([key]) => requiredFields.includes(key))
                     );
@@ -81,6 +105,10 @@ class StudentRegController {
                         insertionError.push(`Application ID invalid: Should be prefixed with 'G' or 'M'  application_id: ${row.application_id}`);
                         skippedCount++;
                         continue;
+                    }
+
+                    if(row?.first_graduate){
+                        row.first_graduate.toLowerCase()
                     }
 
                     // Check if the row already exists in the database
@@ -502,7 +530,7 @@ class StudentRegController {
 
                 try {
                     const keys = Object.keys(fields);
-                    const values = Object.values(fields).map(v => v === null || v==="" ? 'NULL' : `'${v}'`);
+                    const values = Object.values(fields).map(v => v === null || v === "" ? 'NULL' : `'${v}'`);
                     const sql = `
                                 INSERT INTO pre_student_register (
                                     ${keys.join(', ')}

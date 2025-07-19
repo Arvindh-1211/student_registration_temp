@@ -81,7 +81,7 @@ function EditUserModal({ userData, isOpen, setIsOpen }) {
           />
           <DropDown
             label="Role"
-            options={['admin', 'manager']}
+            options={['admin', 'manager', 'accounts_manager']}
             fieldname={'role'}
             formcontrol={control}
             storeLabel={true}
