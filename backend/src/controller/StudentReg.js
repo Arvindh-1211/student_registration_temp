@@ -18,6 +18,24 @@ class StudentRegController {
         }
     }
 
+    getUnfreezedApplications = async (req, res) => {
+        try {
+            const sql = `
+                SELECT psr.sno, psr.student_name, psr.initial, psr.stu_mobile_no, psr.tnea_app_no, psr.scholar,
+                    (SELECT bm.branch_name FROM branch_master bm WHERE bm.branch_id=psr.branch_id) AS branch,
+                    (SELECT cm.course_code FROM course_master cm WHERE cm.course_id=psr.course_id) AS course,
+                    (SELECT sc.stu_cat FROM student_category sc WHERE sc.stu_cat_id=psr.student_cat_id) AS student_cat
+                FROM pre_student_register psr 
+                WHERE psr.application_no IS NULL
+                ORDER BY psr.sno DESC
+            `;
+            const result = await camps.query(sql)
+            res.json(result[0]);
+        } catch (error) {
+            res.status(500).send({ error: 'Error fetching unfreezed applications', message: error.message });
+        }
+    }
+
     getIncompleteApplication = async (req, res) => {
         try {
             const sql = `
@@ -27,7 +45,7 @@ class StudentRegController {
                     (SELECT sc.stu_cat FROM student_category sc WHERE sc.stu_cat_id=psr.student_cat_id) AS student_cat
                 FROM pre_student_register psr 
                 INNER JOIN admission_payment_details apd ON apd.pre_student_register_sno = psr.sno
-                WHERE psr.application_no IS NULL 
+                WHERE (psr.application_no = 0 OR psr.application_no IS NULL)
                     AND apd.approved_by IS NOT NULL
                 ORDER BY psr.sno DESC
             `;
@@ -724,6 +742,17 @@ class StudentRegController {
         }
     }
 
+    freezeApplication = async (req, res) => {
+        try {
+            const applicationNo = req.params.application_no;
+            const sql = `UPDATE pre_student_register SET application_no = '0' WHERE sno = ${applicationNo}`;
+            await camps.query(sql)
+            res.json({ message: `Application: ${applicationNo} frozen successfully` });
+        } catch (error) {
+            res.status(500).send({ error: 'Error freezing application', message: error.message });
+        }
+    }
+
     insertStudentAdditionalDet = async (req, res) => {
         try {
 
@@ -798,6 +827,7 @@ class StudentRegController {
             req.body.modified_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
             req.body.dd_date ? req.body.dd_date = new Date(req.body.dd_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.dd_date = null;
+            req.body.partial_payment_date ? req.body.partial_payment_date = new Date(req.body.partial_payment_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.partial_payment_date = null;
 
             if (req.body.boarding_point) {
                 const boardingPointResults = await camps.query(
@@ -884,7 +914,7 @@ class StudentRegController {
             const total_fee = Number(fee_details[0][0].total_fee) || 0;
             const college_fee = Number(fee_details[0][0].college_fee) || 0;
             const hostel_lunch = Number(fee_details[0][0].hostel_lunch) || 0;
-            const first_graduate = payment_details[0][0].first_graduate === 'yes' ? 25000 : 0;
+            const first_graduate = payment_details[0][0].first_graduate.toLowerCase() === 'yes' ? 25000 : 0;
 
             let bus_fee = 0;
             if (payment_details[0][0].bus_boarding_point) {

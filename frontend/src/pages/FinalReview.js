@@ -874,7 +874,20 @@ function FinalReview() {
             </ProtectedComponent>
             <ProtectedComponent users={['GOVERNMENT', 'MANAGEMENT']}>
                 <div>
-                    <input className='submit-btn' type='button' value="Freeze" onClick={() => { navigate('/success') }} />
+                    <input className='submit-btn' type='button' value="Freeze" onClick={ async () => {
+                                setIsLoading(true)
+                                setError(null)
+                                try{
+
+                                    await services.freezeApplication(applicationNo)
+                                    navigate('/success') 
+                                    setIsLoading(false)
+                                }
+                                catch (error) {
+                                    setIsLoading(false)
+                                    setError("Error freezing application!")
+                                }
+                         }} />
                 </div>
             </ProtectedComponent>
         </div>

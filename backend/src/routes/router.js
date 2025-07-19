@@ -32,6 +32,9 @@ router.route('/student_reg/:application_no')
     .get(studentRegController.getData)
     .put(studentRegController.updateStudentReg)
 
+router.route('/student_reg/:application_no/freeze')
+    .post(studentRegController.freezeApplication)
+
 router.route('/student_add_det')
     .post(studentRegController.insertStudentAdditionalDet)
 
@@ -60,6 +63,9 @@ router.route('/submitted_application')
 
 router.route('/incomplete_application')
     .get(roleMiddleware(['admin', 'manager', 'accounts_manager']), studentRegController.getIncompleteApplication)
+
+router.route('/unfreezed_application')
+    .get(roleMiddleware(['admin', 'manager', 'accounts_manager']), studentRegController.getUnfreezedApplications)
 
 router.route('/payment_not_verified_applications')
     .get(roleMiddleware(['admin', 'manager', 'accounts_manager']), studentRegController.getPaymentNotVerifiedApplications)

@@ -168,6 +168,16 @@ const deleteUser = async (id) => {
     }
 }
 
+const freezeApplication = async (applicationNo) => {
+    try {
+        const response = await apiInstance.post(`/student_reg/${applicationNo}/freeze`)
+        return response
+    } catch (error) {
+        console.log("Cannot freeze application")
+        throw error
+    }
+}
+
 const getSubmittedApplications = async () => {
     try {
         const response = await apiInstance.get(`/submitted_application`)
@@ -194,6 +204,17 @@ const getPaymentNotVerifiedApplications = async () => {
         return response.data
     } catch (error) {
         console.log("Cannot fetch incomplete applications")
+        throw error
+    }
+}
+
+const getUnfreezedApplications = async () => {
+    try {
+        const response = await apiInstance.get(`/unfreezed_application`)
+        return response.data
+    }
+    catch (error) {
+        console.log("Cannot fetch unfreezed applications")
         throw error
     }
 }
@@ -225,9 +246,11 @@ const services = {
     getUserDetails,
     editUser,
     deleteUser,
+    freezeApplication,
     getSubmittedApplications,
     getIncompleteApplications,
     getPaymentNotVerifiedApplications,
+    getUnfreezedApplications,
     deleteApplication
 };
 

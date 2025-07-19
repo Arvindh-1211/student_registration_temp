@@ -266,6 +266,8 @@ function PersonalDetails() {
                         fieldname={"scholar"}
                         formcontrol={control}
                         sorted={false}
+                        required
+                        error={errors.scholar && errors.scholar.message}
                     />
                 </Row>
             </Form>

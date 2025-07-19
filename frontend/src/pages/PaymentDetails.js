@@ -18,6 +18,8 @@ import Error from "../Components/Error";
 import ProtectedComponent from "../Components/ProtectedComponent";
 import '../css/PaymentDetails.css';
 
+// TODO First graduate
+
 function Detail({ label, value, marks }) {
     return (
         <div className='detail'>
@@ -39,12 +41,13 @@ function PaymentDetails() {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    // const applicationData = useState(location.state.appplicationData)
+    const applicationData = location.state.applicationData
 
     const [feesToPay, setFeesToPay] = useState(0);
 
     const formData = {
         token_number: null,
+        first_graduate: null,
         tfc_initial_payment: null,
         // Payment method arrays to support multiple payments
         fee_payment_option: [],
@@ -67,7 +70,7 @@ function PaymentDetails() {
 
     const { register, control, getValues, setValue, watch, handleSubmit, reset, formState: { errors } } = useForm({
         defaultValues: formData,
-        // resolver: yupResolver(schema.PaymentDetails)
+        resolver: yupResolver(schema.PaymentDetails)
     });
 
     // Watch payment methods and amounts to conditionally show fields
@@ -77,6 +80,9 @@ function PaymentDetails() {
     const onlineAmount = watch('online_pay_amount');
     const partialPayment = watch('partial_payment');
     const tfcInitialPayment = watch('tfc_initial_payment');
+
+    const first_graduate = watch('first_graduate');
+    applicationData.first_graduate = first_graduate;
 
     useEffect(() => {
         const getDefaultValues = async () => {
@@ -393,7 +399,7 @@ function PaymentDetails() {
                                 registerProps={register("dd_amount")}
                                 type="number"
                                 step="0.01"
-                                // error={errors.dd_amount && errors.dd_amount.message}
+                                error={errors.dd_amount && errors.dd_amount.message}
                                 required
                             />
                             <DropDown
@@ -401,7 +407,7 @@ function PaymentDetails() {
                                 options={options['bank_name']}
                                 fieldname={"dd_bank_name"}
                                 formcontrol={control}
-                                // error={errors.dd_bank_name && errors.dd_bank_name.message}
+                                error={errors.dd_bank_name && errors.dd_bank_name.message}
                                 required
                             />
                         </Row>
@@ -410,14 +416,14 @@ function PaymentDetails() {
                                 label="DD Date"
                                 registerProps={register("dd_date")}
                                 type="date"
-                                // error={errors.dd_date && errors.dd_date.message}
+                                error={errors.dd_date && errors.dd_date.message}
                                 required
                             />
                             <InputField
                                 label="DD Number"
                                 registerProps={register("dd_number")}
                                 type="text"
-                                // error={errors.dd_number && errors.dd_number.message}
+                                error={errors.dd_number && errors.dd_number.message}
                                 required
                             />
                         </Row>
@@ -434,14 +440,14 @@ function PaymentDetails() {
                                 registerProps={register("card_swipe_amount")}
                                 type="number"
                                 step="0.01"
-                                // error={errors.card_swipe_amount && errors.card_swipe_amount.message}
+                                error={errors.card_swipe_amount && errors.card_swipe_amount.message}
                                 required
                             />
                             <InputField
                                 label="Card Reference Number"
                                 registerProps={register("card_swipe_reference_no")}
                                 type="text"
-                                // error={errors.card_swipe_reference_no && errors.card_swipe_reference_no.message}
+                                error={errors.card_swipe_reference_no && errors.card_swipe_reference_no.message}
                                 required
                             />
                         </Row>
@@ -458,14 +464,14 @@ function PaymentDetails() {
                                 registerProps={register("online_pay_amount")}
                                 type="number"
                                 step="0.01"
-                                // error={errors.online_pay_amount && errors.online_pay_amount.message}
+                                error={errors.online_pay_amount && errors.online_pay_amount.message}
                                 required
                             />
                             <InputField
                                 label="Online Reference Number"
                                 registerProps={register("online_pay_reference_no")}
                                 type="text"
-                                // error={errors.online_pay_reference_no && errors.online_pay_reference_no.message}
+                                error={errors.online_pay_reference_no && errors.online_pay_reference_no.message}
                                 required
                             />
                         </Row>
@@ -483,7 +489,7 @@ function PaymentDetails() {
                             }}
                             fieldname={"partial_payment"}
                             formcontrol={control}
-                        // error={errors.partial_payment && errors.partial_payment.message}
+                            error={errors.partial_payment && errors.partial_payment.message}
                         />
 
                         {/* Partial Payment Date - Only show if partial payment is "yes" */}
@@ -551,13 +557,29 @@ function PaymentDetails() {
             {isLoading && <Loading />}
             {error && <Error message={error} />}
             <Form handleNext={handleSubmit(onSubmit)} heading="Payment Details" handleBack={() => { navigate('/additional_details') }}>
+                <div className='details-container'>
+                    <div className='detail-row'>
+                        {applicationData &&
+                            Object.entries(applicationData)
+                                .filter(([key]) => key !== 'student_name' && key !== 'initial')
+                                .map((item, index) => (
+                                    // <div key={index} className='modal-data-row'>
+                                    //     <span className='modal-data-label'>{item[0].split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}:</span> {/* Convert snake_case to a displayable format */}
+                                    //     <span className='modal-data-value'>{item[1]}</span>
+                                    // </div>
+                                    <Detail label={item[0].split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')} value={item[1]} />
+                                ))
+                        }
+                    </div>
+                </div>
+                <hr></hr>
                 <Row>
                     <ProtectedComponent users={['admin', 'manager', 'accounts_manager']}>
                         <InputField
                             label="Token Number"
                             registerProps={register("token_number")}
                             type="number"
-                            // error={errors.token_number && errors.token_number.message}
+                            error={errors.token_number && errors.token_number.message}
                             required
                         />
                     </ProtectedComponent>
@@ -566,7 +588,7 @@ function PaymentDetails() {
                         options={{ '0': '0', '5000': '5000', '25000': '25000', '300000': '300000' }}
                         fieldname={"tfc_initial_payment"}
                         formcontrol={control}
-                        // error={errors.tfc_initial_payment && errors.tfc_initial_payment.message}
+                        error={errors.tfc_initial_payment && errors.tfc_initial_payment.message}
                         required
                     />
                 </Row>

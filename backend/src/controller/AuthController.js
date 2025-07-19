@@ -170,9 +170,9 @@ class AuthController {
                         // "tnea_pay_rec_date": "",
                         // "tnea_pay_rec_amt": "",
                         // "tnea_pay_bank": "",
-                        "adm_sch_name1": row.first_graduate === "yes" ? "FIRST GRADUATE." : "",
+                        "adm_sch_name1": row.first_graduate.toLowerCase() === "yes" ? "FIRST GRADUATE." : "",
                         // "adm_sch_name2": "",
-                        "adm_sch_amt1": row.first_graduate === "yes" ? "25000" : "",
+                        "adm_sch_amt1": row.first_graduate.toLowerCase() === "yes" ? "25000" : "",
                         // "adm_sch_amt2": "",
 
                         "physics_secured": "0",

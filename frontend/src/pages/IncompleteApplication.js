@@ -11,6 +11,7 @@ function IncompleteApplication() {
     const [submittedApplications, setSubmittedApplications] = useState([])
     const [incompleteApplications, setIncompleteApplications] = useState([])
     const [paymentNotVerifiedApplications, setPaymentNotVerifiedApplications] = useState([])
+    const [unfreezedApplications, setUnfreezedApplications] = useState([])
     const [isEditApplicationModalOpen, setIsEditApplicationModalOpen] = useState(false)
     const [isEditPaymentNotVerifiedApplicationModalOpen, setIsEditPaymentNotVerifiedApplicationModalOpen] = useState(false)
     const [applicationData, setApplicationData] = useState(null)
@@ -31,6 +32,9 @@ function IncompleteApplication() {
 
                 const sub_apl = await services.getSubmittedApplications()
                 setSubmittedApplications(sub_apl)
+
+                const unfreezedApplications = await services.getUnfreezedApplications()
+                setUnfreezedApplications(unfreezedApplications)
             } catch (error) {
                 setError("Failed to fetch applications!")
             } finally {
@@ -56,11 +60,13 @@ function IncompleteApplication() {
             {isLoading && <Loading />}
             {error && <Error message={error} />}
 
+
+
             <Table
                 tableData={paymentNotVerifiedApplications}
                 title={'Payment Not Verified Applications'}
                 onRowClick={handlePaymentNotVerifiedApplicationClick}
-                // onCreateNew={() => navigate('/')}
+            // onCreateNew={() => navigate('/')}
             />
             {isEditPaymentNotVerifiedApplicationModalOpen && (
                 <EditPaymentNotVerifiedApplicationModal
@@ -74,7 +80,7 @@ function IncompleteApplication() {
                 tableData={incompleteApplications}
                 title={'Incomplete Applications'}
                 onRowClick={handleApplicationClick}
-                // onCreateNew={() => navigate('/')}
+            // onCreateNew={() => navigate('/')}
             />
             {isEditApplicationModalOpen && (
                 <EditApplicationModal

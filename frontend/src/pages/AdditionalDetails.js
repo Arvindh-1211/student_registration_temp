@@ -159,6 +159,7 @@ function AdditionalDetails() {
                         options={{ "Government": "Government", "Private": "Private", "Government Aided": "Government Aided" }}
                         fieldname={"school_type"}
                         formcontrol={control}
+                        required
                     />
                 </Row>
                 <Row>

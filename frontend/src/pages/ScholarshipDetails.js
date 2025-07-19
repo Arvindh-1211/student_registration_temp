@@ -74,12 +74,9 @@ function ScholarshipDetails() {
     const scholarship1 = watch('adm_sch_name1')
     const scholarship2 = watch('adm_sch_name2')
 
-    // console.log(scholarship_data);
-
 
     useEffect(() => {
         if (scholarship1) {
-            // Find the entry where discount_name matches scholarship1
             const entry = Object.values(scholarship_data).find(
                 item => item.discount_name.trim() === scholarship1.trim()
             );

@@ -35,6 +35,9 @@ const PersonalDetails = Yup.object().shape({
 
     seat_cat: Yup.string()
         .required("Seat Category is required"),
+        
+    scholar: Yup.string()
+        .required("Scholar is required"),
 })
 
 const ParentDetails = Yup.object().shape({
@@ -207,14 +210,22 @@ const AdditionalDetails = Yup.object().shape({
         .transform((value, originalValue) => originalValue === '' ? null : value)
         .nullable(true),
 
+    school_type: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .required("School type is reuquired"),
+
     sports_int: Yup.string()
         .transform((value, originalValue) => originalValue === '' ? null : value)
         .nullable(true),
 
     first_gr_appno: Yup.string()
-        .matches(/^[A-Za-z0-9]*$/, "Invalid Format")
+        .matches(/^[A-Za-z0-9-]*$/, "Invalid Format")
         .transform((value, originalValue) => originalValue === '' ? null : value)
         .nullable(true),
+
+    choose_college: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .required("This is reuquired"),
 });
 
 
@@ -645,184 +656,154 @@ const AddStudent = Yup.object().shape({
 })
 
 const PaymentDetails = Yup.object().shape({
-    // Token number validation (admin/manager only)
-    token_number: Yup
-        .number()
-        .typeError('Token Number must be a number')
-        .positive('Token Number must be positive')
-        .nullable(),
+    token_number: Yup.number()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .positive("Token number must be positive")
+        .integer("Token number must be an integer"),
 
-    // TFC Initial Payment validation
-    tfc_initial_payment: Yup
-        .number()
-        .typeError('TFC Initial Payment must be a number')
-        .min(0, 'TFC Initial Payment cannot be negative')
-        .required('TFC Initial Payment is required'),
+    tfc_initial_payment: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .required("TFC Initial Payment is required"),
 
-    // Payment methods array validation
-    payment_method: Yup
-        .array()
-        .of(Yup.string().oneOf(['demand draft', 'card swiping', 'online payment', 'no fees'], 'Invalid payment method'))
-        .min(1, 'At least one payment method must be selected')
-        .required('Payment method selection is required'),
+    fee_payment_option: Yup.array()
+        .of(Yup.string())
+        .min(1, "At least one payment method must be selected")
+        .required("Payment method is required"),
 
-    // Demand Draft validations - conditional based on payment_method array
-    dd_amount: Yup
-        .number()
-        .typeError('DD Amount must be a number')
-        .when('payment_method', (paymentMethods, schema) => {
-            if (paymentMethods && paymentMethods.includes('demand draft')) {
-                return schema
-                    .required('DD Amount is required for demand draft')
-                    .min(0.01, 'DD Amount must be greater than 0');
-            }
-            return schema.nullable();
+    // Demand Draft validations - conditional based on payment method selection
+    dd_amount: Yup.number()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .when('fee_payment_option', {
+            is: (methods) => methods && methods.includes('demand draft'),
+            then: (schema) => schema
+                .required("DD amount is required when Demand Draft is selected")
+                .positive("DD amount must be positive")
+                .typeError("DD amount must be a valid number"),
+            otherwise: (schema) => schema.nullable(true)
         }),
 
-    dd_bank_name: Yup
-        .string()
-        .when('payment_method', (paymentMethods, schema) => {
-            if (paymentMethods && paymentMethods.includes('demand draft')) {
-                return schema
-                    .required('Bank Name is required for demand draft')
-                    .min(2, 'Bank Name must be at least 2 characters');
-            }
-            return schema.nullable();
+    dd_bank_name: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .when('fee_payment_option', {
+            is: (methods) => methods && methods.includes('demand draft'),
+            then: (schema) => schema.required("Bank name is required when Demand Draft is selected"),
+            otherwise: (schema) => schema.nullable(true)
         }),
 
-    dd_date: Yup
-        .date()
-        .typeError('Please enter a valid date')
-        .when('payment_method', (paymentMethods, schema) => {
-            if (paymentMethods && paymentMethods.includes('demand draft')) {
-                return schema
-                    .required('DD Date is required for demand draft')
-                    .max(new Date(), 'DD Date cannot be in the future');
-            }
-            return schema.nullable();
+    dd_date: Yup.date()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .when('fee_payment_option', {
+            is: (methods) => methods && methods.includes('demand draft'),
+            then: (schema) => schema
+                .required("DD date is required when Demand Draft is selected")
+                .max(new Date(), "DD date cannot be in the future"),
+            otherwise: (schema) => schema.nullable(true)
         }),
 
-    dd_number: Yup
-        .number()
-        .when('payment_method', (paymentMethods, schema) => {
-            if (paymentMethods && paymentMethods.includes('demand draft')) {
-                return Yup.number()
-                    .typeError('DD Number must be a number')
-                    .required('DD Number is required for demand draft')
-                    .test('len', 'DD Number must be exactly 6 digits', val => val && val.toString().length === 6);
-            }
-            return Yup.number().nullable();
+    dd_number: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .when('fee_payment_option', {
+            is: (methods) => methods && methods.includes('demand draft'),
+            then: (schema) => schema
+                .required("DD number is required when Demand Draft is selected")
+                .matches(/^[0-9]{6}$/, "DD number must be exactly 6 digits"),
+            otherwise: (schema) => schema.nullable(true)
         }),
 
     // Card Swiping validations
-    card_swipe_amount: Yup
-        .number()
-        .typeError('Card Swipe Amount must be a number')
-        .when('payment_method', (paymentMethods, schema) => {
-            if (paymentMethods && paymentMethods.includes('card swiping')) {
-                return schema
-                    .required('Card Swipe Amount is required for card swiping')
-                    .min(0.01, 'Card Swipe Amount must be greater than 0');
-            }
-            return schema.nullable();
+    card_swipe_amount: Yup.number()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .when('fee_payment_option', {
+            is: (methods) => methods && methods.includes('card swiping'),
+            then: (schema) => schema
+                .required("Card swipe amount is required when Card Swiping is selected")
+                .positive("Card swipe amount must be positive")
+                .typeError("Card swipe amount must be a valid number"),
+            otherwise: (schema) => schema.nullable(true)
         }),
 
-    card_swipe_reference_no: Yup
-        .string()
-        .when('payment_method', (paymentMethods, schema) => {
-            if (paymentMethods && paymentMethods.includes('card swiping')) {
-                return schema
-                    .required('Card Reference Number is required for card swiping')
-                    .min(4, 'Card Reference Number must be at least 4 characters')
-                    .matches(/^[0-9A-Za-z]+$/, 'Card Reference Number must contain only letters and numbers');
-            }
-            return schema.nullable();
+    card_swipe_reference_no: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .when('fee_payment_option', {
+            is: (methods) => methods && methods.includes('card swiping'),
+            then: (schema) => schema
+                .required("Card reference number is required when Card Swiping is selected")
+                .matches(/^[A-Za-z0-9]+$/, "Card reference number should contain only letters and numbers"),
+            otherwise: (schema) => schema.nullable(true)
         }),
 
     // Online Payment validations
-    online_pay_amount: Yup
-        .number()
-        .typeError('Online Payment Amount must be a number')
-        .when('payment_method', (paymentMethods, schema) => {
-            if (paymentMethods && paymentMethods.includes('online payment')) {
-                return schema
-                    .required('Online Payment Amount is required for online payment')
-                    .min(0.01, 'Online Payment Amount must be greater than 0');
-            }
-            return schema.nullable();
+    online_pay_amount: Yup.number()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .when('fee_payment_option', {
+            is: (methods) => methods && methods.includes('online payment'),
+            then: (schema) => schema
+                .required("Online payment amount is required when Online Payment is selected")
+                .positive("Online payment amount must be positive")
+                .typeError("Online payment amount must be a valid number"),
+            otherwise: (schema) => schema.nullable(true)
         }),
 
-    online_pay_reference_no: Yup
-        .string()
-        .when('payment_method', (paymentMethods, schema) => {
-            if (paymentMethods && paymentMethods.includes('online payment')) {
-                return schema
-                    .required('Online Reference Number is required for online payment')
-                    .min(4, 'Online Reference Number must be at least 4 characters')
-                    .matches(/^[0-9A-Za-z]+$/, 'Online Reference Number must contain only letters and numbers');
-            }
-            return schema.nullable();
+    online_pay_reference_no: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .when('fee_payment_option', {
+            is: (methods) => methods && methods.includes('online payment'),
+            then: (schema) => schema
+                .required("Online reference number is required when Online Payment is selected")
+                .matches(/^[A-Za-z0-9]+$/, "Online reference number should contain only letters and numbers"),
+            otherwise: (schema) => schema.nullable(true)
         }),
 
-    // Custom validation to ensure total amount is provided when payment methods are selected
-    total_amount: Yup
-        .number()
-        .typeError('Total Amount must be a number')
-        .when('payment_method', (paymentMethods, schema) => {
-            if (paymentMethods && paymentMethods.length > 0 && !paymentMethods.includes('no fees')) {
-                return schema
-                    .required('Total Amount is required')
-                    .min(0.01, 'Total Amount must be greater than 0');
-            }
-            return schema.nullable();
-        })
-}).test('payment-method-validation', 'Payment validation failed', function (values) {
-    const { payment_method } = values;
+    // Partial Payment validations
+    partial_payment: Yup.string()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .oneOf(['yes', 'no', null], "Please select a valid option for partial payment"),
 
-    // If no payment methods selected, fail validation
-    if (!payment_method || payment_method.length === 0) {
-        return this.createError({
-            path: 'payment_method',
-            message: 'At least one payment method must be selected'
-        });
+    partial_payment_date: Yup.date()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
+        .nullable(true)
+        .when('partial_payment', {
+            is: 'yes',
+            then: (schema) => schema
+                .required("Partial payment date is required when partial payment is allowed")
+                .min(new Date(), "Partial payment date must be in the future"),
+            otherwise: (schema) => schema.nullable(true)
+        }),
+
+    // Custom validation to ensure total amount is sufficient (unless partial payment is allowed or no fees selected)
+}).test('sufficient-payment', 'Total payment amount is insufficient', function(values) {
+    const { fee_payment_option, dd_amount, card_swipe_amount, online_pay_amount, tfc_initial_payment, partial_payment } = values;
+    
+    // Skip validation if no fees is selected
+    if (fee_payment_option && fee_payment_option.includes('no fees')) {
+        return true;
     }
-
-    // If "no fees" is selected with other methods, fail validation
-    if (payment_method.includes('no fees') && payment_method.length > 1) {
-        return this.createError({
-            path: 'payment_method',
-            message: 'No fees cannot be selected with other payment methods'
-        });
+    
+    // Skip validation if partial payment is allowed
+    if (partial_payment === 'yes') {
+        return true;
     }
-
-    // If payment methods are selected (not "no fees"), validate total amount matches sum
-    if (!payment_method.includes('no fees')) {
-        const ddAmount = parseFloat(values.dd_amount) || 0;
-        const cardAmount = parseFloat(values.card_swipe_amount) || 0;
-        const onlineAmount = parseFloat(values.online_pay_amount) || 0;
-        const calculatedTotal = ddAmount + cardAmount + onlineAmount;
-
-        if (calculatedTotal <= 0) {
-            return this.createError({
-                path: 'payment_method',
-                message: 'At least one payment amount must be provided'
-            });
-        }
-
-        // Optional: Validate that the total_amount matches the calculated total
-        // Uncomment if you want strict total validation
-        /*
-        const totalAmount = parseFloat(values.total_amount) || 0;
-        if (Math.abs(totalAmount - calculatedTotal) > 0.01) {
-            return this.createError({
-                path: 'total_amount',
-                message: 'Total amount does not match the sum of individual payments'
-            });
-        }
-        */
-    }
-
-    return true;
+    
+    // Calculate total amount
+    const totalAmount = 
+        (parseFloat(dd_amount) || 0) +
+        (parseFloat(card_swipe_amount) || 0) +
+        (parseFloat(online_pay_amount) || 0) +
+        (parseFloat(tfc_initial_payment) || 0);
+    
+    // Note: You would need to pass feesToPay value to validation context
+    // This is a simplified version - you might need to adjust based on your setup
+    return totalAmount > 0;
 });
 
 const schema = {
@@ -834,6 +815,7 @@ const schema = {
     ScholarshipDetails,
     AdditionalDetails,
     MarkDetails,
+    PaymentDetails,
     AddStudent,
 }
 
