@@ -32,7 +32,7 @@ function ScholarshipDetails() {
     const [options, setOptions] = useState({});
     const [scholarship_data, setScholarshipData] = useState({});
 
-    const { register, control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm({ defaultValues: formData, resolver: yupResolver(schema.ScholarshipDetails) });
+    const { register, control, handleSubmit, watch, setValue, getValues, reset, formState: { errors } } = useForm({ defaultValues: formData, resolver: yupResolver(schema.ScholarshipDetails) });
 
     useEffect(() => {
         const getDefaultValues = async () => {
@@ -74,12 +74,32 @@ function ScholarshipDetails() {
     const scholarship1 = watch('adm_sch_name1')
     const scholarship2 = watch('adm_sch_name2')
 
-    if (scholarship1) {
-        setValue('adm_sch_amt1', scholarship_data[scholarship1].discount_amount)
-    }
-    if (scholarship2) {
-        setValue('adm_sch_amt2', scholarship_data[scholarship2].discount_amount)
-    }
+    // console.log(scholarship_data);
+
+
+    useEffect(() => {
+        if (scholarship1) {
+            // Find the entry where discount_name matches scholarship1
+            const entry = Object.values(scholarship_data).find(
+                item => item.discount_name.trim() === scholarship1.trim()
+            );
+            if (entry) {
+                setValue('adm_sch_amt1', Number(entry.discount_amount));
+            }
+        }
+    }, [scholarship1, scholarship_data, setValue]);
+
+    useEffect(() => {
+        if (scholarship2) {
+            const entry = Object.values(scholarship_data).find(
+                item => item.discount_name.trim() === scholarship2.trim()
+            );
+            if (entry) {
+                setValue('adm_sch_amt2', Number(entry.discount_amount));
+            }
+        }
+    }, [scholarship2, scholarship_data, setValue]);
+
 
     const onSubmit = async (data) => {
         setIsLoading(true)

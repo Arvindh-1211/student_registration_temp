@@ -39,7 +39,7 @@ function PaymentDetails() {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    const applicationData = useState(location.state.appplicationData)
+    // const applicationData = useState(location.state.appplicationData)
 
     const [feesToPay, setFeesToPay] = useState(0);
 

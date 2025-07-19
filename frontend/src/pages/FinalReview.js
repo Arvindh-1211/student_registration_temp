@@ -235,6 +235,7 @@ function FinalReview() {
         partial_payment: null,
         partial_payment_date: null,
         total_amount: null,
+        approved_by: null
     });
 
     useEffect(() => {
@@ -489,7 +490,7 @@ function FinalReview() {
 
             // Check if admin or manager has enetered token_number, payment_method in payment details
             if (auth && ['admin', 'manager', 'accounts_manager'].includes(auth.role)) {
-                if (!paymentData.token_number || !paymentData.payment_method) {
+                if (!paymentData.approved_by) {
                     setError("Payment not yet verified!")
                     setIsLoading(false)
                     return;
