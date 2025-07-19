@@ -40,6 +40,15 @@ const updatePaymentDetails = async (applicationNo, data) => {
     }
 }
 
+const getTotalFees = async (applicationNo) => {
+    try {
+        const response = await apiInstance.get(`/payment_details/total_fee/${applicationNo}`)
+        return response.data
+    } catch (error) {
+        console.log("Cannot fetch total fees from admission_payment_details table")
+    }
+}
+
 const getPaymentDetails = async (applicationNo, queryParams) => {
     try {
         const response = await apiInstance.get(`/payment_details/${applicationNo}`, {
@@ -193,6 +202,7 @@ const services = {
     fetchData,
     updateData,
     updatePaymentDetails,
+    getTotalFees,
     getPaymentDetails,
     fetchFromMaster,
     getValueFromMaster,

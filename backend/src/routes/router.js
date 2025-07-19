@@ -42,6 +42,9 @@ router.route('/payment_details/:application_no')
     .post(studentRegController.updatePaymentDetails)
     .get(studentRegController.getPaymentDetails)
 
+router.route('/payment_details/total_fee/:application_no')
+    .get(studentRegController.getTotalFees)
+
 router.route('/insert_into_camps/:application_no')
     .post(studentRegController.insertIntoCAMPS)
 

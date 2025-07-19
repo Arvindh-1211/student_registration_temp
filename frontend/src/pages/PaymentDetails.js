@@ -22,8 +22,11 @@ function PaymentDetails() {
     const navigate = useNavigate()
     const location = useLocation()
     const applicationNo = useSelector((state) => state.applicationNo.value)
+    const userName = useSelector((state) => state.auth?.username)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+
+    const [feesToPay, setFeesToPay] = useState(0);
 
     const formData = {
         token_number: null,
@@ -39,6 +42,8 @@ function PaymentDetails() {
         card_swipe_reference_no: null,
         online_pay_amount: null,
         online_pay_reference_no: null,
+        partial_payment: null,
+        partial_payment_date: null,
     }
 
     const [options, setOptions] = useState({
@@ -55,6 +60,7 @@ function PaymentDetails() {
     const ddAmount = watch('dd_amount');
     const cardAmount = watch('card_swipe_amount');
     const onlineAmount = watch('online_pay_amount');
+    const partialPayment = watch('partial_payment');
 
     useEffect(() => {
         const getDefaultValues = async () => {
@@ -84,6 +90,15 @@ function PaymentDetails() {
                     }).replace(/\//g, '-')
                     setValue('dd_date', ddDate)
                 }
+
+                if (getValues('partial_payment_date')) {
+                    let partialDate = new Date(getValues('partial_payment_date')).toLocaleDateString('ja-JP', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    }).replace(/\//g, '-')
+                    setValue('partial_payment_date', partialDate)
+                }
             } catch (error) {
                 console.error('Error fetching payment details:', error);
                 setError("Error fetching payment details!");
@@ -112,12 +127,27 @@ function PaymentDetails() {
             }
         };
 
+        const getTotalFees = async () => {
+            try {
+                const response = await services.getTotalFees(applicationNo);
+                if (response) {
+                    setFeesToPay(response.total_fees);
+                } else {
+                    setError("Error fetching total fees!");
+                }
+            } catch (error) {
+                console.error('Error fetching total fees:', error);
+                setError("Error fetching total fees!");
+            }
+        };
+
         const init = async () => {
             setIsLoading(true)
             setError(null)
             try {
                 await getDefaultValues();
                 await getOptions();
+                await getTotalFees();
             } catch (error) {
                 console.error('Error during initialization:', error);
                 setError("Error loading payment details!");
@@ -188,6 +218,53 @@ function PaymentDetails() {
         }
     }
 
+    const handleApprove = async () => {
+        setIsLoading(true)
+        setError(null)
+
+        try {
+            const data = getValues();
+            const totalAmount = paymentMethods.includes('no fees') ? 0 :
+                (parseFloat(data.dd_amount) || 0) +
+                (parseFloat(data.card_swipe_amount) || 0) +
+                (parseFloat(data.online_pay_amount) || 0);
+
+            // Check if total amount is sufficient or if partial payment is allowed
+            const canApprove = totalAmount >= feesToPay || data.partial_payment;
+            
+            if (!canApprove) {
+                setError("Cannot approve: Total amount is less than required fees and partial payment is not checked!");
+                return;
+            }
+
+            const submissionData = {
+                ...data,
+                total_amount: totalAmount,
+                approved_by: userName,
+                // Convert array back to SET format for database
+                fee_payment_option: data.fee_payment_option ? data.fee_payment_option.join(',') : ''
+            };
+
+            const response = await services.updatePaymentDetails(applicationNo, submissionData)
+
+            if (response) {
+                alert('Payment approved successfully!');
+                if (location.state && location.state.fromFinal) {
+                    navigate('/final_review')
+                } else {
+                    navigate('/final_review')
+                }
+            } else {
+                setError("Error approving payment!")
+            }
+        } catch (error) {
+            console.error('Error approving payment:', error);
+            setError("Error approving payment!");
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     const paymentMethodOptions = [
         { value: 'demand draft', label: 'Demand Draft' },
         { value: 'card swiping', label: 'Card Swiping' },
@@ -222,7 +299,17 @@ function PaymentDetails() {
         }
     };
 
+    const calculateTotalAmount = () => {
+        return paymentMethods.includes('no fees') ? 0 :
+            (parseFloat(ddAmount) || 0) +
+            (parseFloat(cardAmount) || 0) +
+            (parseFloat(onlineAmount) || 0);
+    };
+
     const renderPaymentMethodFields = () => {
+        const totalAmount = calculateTotalAmount();
+        const isAmountSufficient = totalAmount >= feesToPay;
+
         return (
             <div>
                 {/* Payment Method Selection */}
@@ -336,6 +423,37 @@ function PaymentDetails() {
                     </div>
                 )}
 
+                {/* Partial Payment Section - Only visible to accounts_manager */}
+                <ProtectedComponent users={['accounts_manager']}>
+                    <Row>
+                        <div className="partial-payment-section">
+                            <div className="partial-payment-checkbox-container">
+                                <input
+                                    type="checkbox"
+                                    id="partial_payment"
+                                    {...register("partial_payment")}
+                                    className="partial-payment-checkbox"
+                                />
+                                <label htmlFor="partial_payment" className="partial-payment-label">
+                                    Allow Partial Payment
+                                </label>
+                            </div>
+                        </div>
+                    </Row>
+                    
+                    {/* Partial Payment Date - Only show if partial payment is checked */}
+                    {partialPayment && (
+                        <Row>
+                            <InputField
+                                label="Partial Payment Date"
+                                registerProps={register("partial_payment_date")}
+                                type="date"
+                                required
+                            />
+                        </Row>
+                    )}
+                </ProtectedComponent>
+
                 {/* No Fees Message */}
                 {paymentMethods.includes('no fees') && (
                     <Row>
@@ -347,20 +465,41 @@ function PaymentDetails() {
                     </Row>
                 )}
 
-                {/* Total Amount Display */}
+                {/* Fees To Pay and Total Amount Display */}
                 {paymentMethods.length > 0 && !paymentMethods.includes('no fees') && (
-                    <Row>
-                        <div className="total-amount-display">
-                            <div className="total-amount-text">
-                                Total Amount: ₹{(
-                                    (parseFloat(ddAmount) || 0) +
-                                    (parseFloat(cardAmount) || 0) +
-                                    (parseFloat(onlineAmount) || 0)
-                                ).toFixed(2)}
+                    <div className="payment-summary-section">
+                        <Row>
+                            <div className="fees-to-pay-display">
+                                <div className="fees-to-pay-text">
+                                    Fees to be Paid: ₹{feesToPay.toFixed(2)}
+                                </div>
                             </div>
+                        </Row>
+                        <Row>
+                            <div className={`total-amount-display ${isAmountSufficient ? 'sufficient' : 'insufficient'}`}>
+                                <div className="total-amount-text">
+                                    Total Amount: ₹{totalAmount.toFixed(2)}
+                                </div>
+                            </div>
+                        </Row>
+                    </div>
+                )}
+
+                {/* Approve Button - Only visible to admin, manager, accounts_manager */}
+                <ProtectedComponent users={['admin', 'manager', 'accounts_manager']}>
+                    <Row>
+                        <div className="approve-button-container">
+                            <button
+                                type="button"
+                                onClick={handleApprove}
+                                className="approve-button"
+                                disabled={isLoading}
+                            >
+                                Approve Payment
+                            </button>
                         </div>
                     </Row>
-                )}
+                </ProtectedComponent>
             </div>
         );
     };

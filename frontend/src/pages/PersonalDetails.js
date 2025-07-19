@@ -57,7 +57,7 @@ function PersonalDetails() {
             const queryParams = Object.keys(formData).join(',')
             const fetchedData = await services.fetchData(applicationNo, queryParams)
             reset(fetchedData)
-            
+
             if (getValues('dob')) {
                 let dob = new Date(getValues('dob')).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')
                 setValue('dob', dob)
@@ -116,6 +116,16 @@ function PersonalDetails() {
 
         const response = await services.updateData(applicationNo, data)
 
+        if (data.scholar) {
+            try {
+                await services.updatePaymentDetails(applicationNo, { scholar: data.scholar })
+            } catch (error) {
+                setError("Error updating scholar in payment details!")
+                setIsLoading(false)
+                return;
+            }
+        }
+
         if (response) {
             if (location.state && location.state.fromFinal) {
                 navigate('/final_review')
@@ -124,7 +134,6 @@ function PersonalDetails() {
             }
         } else {
             setError("Error submitting form!")
-
         }
         setIsLoading(false)
     }
@@ -192,7 +201,7 @@ function PersonalDetails() {
                         formcontrol={control}
                         value='value'
                         error={errors.blood_group && errors.blood_group.message}
-                        />
+                    />
                     <DropDown
                         label="Mother Tongue"
                         options={options['mother_tongue']}

@@ -1,3 +1,4 @@
+const { response } = require("express");
 const { camps } = require("../utils/connectCAMPS");
 
 class StudentRegController {
@@ -832,6 +833,55 @@ class StudentRegController {
             res.send(result[0][0]);
         } catch (error) {
             res.status(500).send({ error: 'Error fetching data from admission_payment_details', message: error.message });
+        }
+    }
+
+    getTotalFees = async (req, res) => {
+        try {
+            const applicationNo = req.params.application_no;
+            let sql = `SELECT * FROM admission_payment_details WHERE pre_student_register_sno = ${applicationNo}`;
+            const payment_details = await camps.query(sql);
+
+            const seatCategoryPascal = payment_details[0][0].seat_category
+                ? payment_details[0][0].seat_category.charAt(0).toUpperCase() + payment_details[0][0].seat_category.slice(1).toLowerCase()
+                : '';
+            const scholarPascal = payment_details[0][0].scholar
+                ? payment_details[0][0].scholar.charAt(0).toUpperCase() + payment_details[0][0].scholar.slice(1).toLowerCase()
+                : '';
+            sql = `SELECT college_fee, hostel_lunch, total_fee FROM admission_fee_demand WHERE branch_id = ${payment_details[0][0].branch_id} AND seat_category = '${seatCategoryPascal}' AND scholar = '${scholarPascal}'`;
+            const fee_details = await camps.query(sql);
+            if (fee_details[0].length === 0) {
+                return res.status(404).json({ message: "No fee details found for the given branch and seat category" });
+            }
+            const total_fee = Number(fee_details[0][0].total_fee) || 0;
+            const college_fee = Number(fee_details[0][0].college_fee) || 0;
+            const hostel_lunch = Number(fee_details[0][0].hostel_lunch) || 0;
+            const first_graduate = payment_details[0][0].first_graduate === 'yes' ? 25000 : 0;
+
+            let bus_fee = 0;
+            if (payment_details[0][0].bus_boarding_point) {
+                sql = `SELECT amount FROM Transport.tr_boardingpoint_master WHERE boarding_point_id = ${payment_details[0][0].bus_boarding_point}`;
+                const bus_fee_result = await camps.query(sql);
+                if (bus_fee_result[0].length > 0) {
+                    bus_fee = Number(bus_fee_result[0][0].amount) || 0;
+                }
+            }
+
+            const response = {
+                total_fee: total_fee + bus_fee - first_graduate,
+                college_fee: college_fee + first_graduate,
+                hostel_lunch: hostel_lunch,
+            };
+            if (bus_fee !== 0) {
+                response.bus_fee = bus_fee;
+            }
+            if (first_graduate !== 0) {
+                response.first_graduate = first_graduate;
+            }
+
+            res.json(response);
+        } catch (error) {
+            res.status(500).json({ error: 'Error fetching total fees', message: error.message });
         }
     }
 
