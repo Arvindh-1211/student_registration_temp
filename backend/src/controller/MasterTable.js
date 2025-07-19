@@ -1,4 +1,4 @@
-const {camps} = require("../utils/connectCAMPS");
+const {camps, transport} = require("../utils/connectCAMPS");
 
 class MasterTableController {
     options = {
@@ -29,6 +29,7 @@ class MasterTableController {
         "university_id": { data_id: 'university_id', data: 'university_name', data_master: 'university_master' },
         "student_cat_id": { data_id: 'stu_cat_id', data: 'stu_cat', data_master: 'student_category' },
         "boarding_point": { data_id: 'boarding_point_id', data: 'boarding_point', data_master: 'tr_boardingpoint_master' },
+        "bus_route": { data_id: 'route_id', data: 'route_name', data_master: 'tr_route_master' },
         "bank_name": { data_id: 'id', data: 'bank_name', data_master: 'admission_bank_master' },
     }
 
@@ -126,6 +127,15 @@ class MasterTableController {
 
     getValue = async (req, res) => {
         try {
+            if(req.params.option == 'boarding_point' || req.params.option == 'bus_route' ){
+                const data_id = this.options[req.params.option].data_id
+                const data = this.options[req.params.option].data
+                const data_master = this.options[req.params.option].data_master
+    
+                const sql = `SELECT ${data} FROM ${data_master} WHERE ${data_id}='${req.params.id}'`
+                const results = await transport.query(sql)
+                return res.json({ value: results[0][0][data] })
+            }
             const data_id = this.options[req.params.option].data_id
             const data = this.options[req.params.option].data
             const data_master = this.options[req.params.option].data_master

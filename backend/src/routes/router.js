@@ -73,7 +73,7 @@ router.route('/payment_not_verified_applications')
 router.route('/incomplete_application/:application_no')
     .delete(roleMiddleware(['admin', 'manager', 'accounts_manager']), studentRegController.deleteIncompleteApplication)
 
-router.use(roleMiddleware(['admin']))
+router.use(roleMiddleware(['admin', 'accounts_manager']))
 router.route('/user')
     .get(authController.getUserDetails)
     .post(authController.addUser)

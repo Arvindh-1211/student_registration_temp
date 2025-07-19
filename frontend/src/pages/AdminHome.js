@@ -59,7 +59,7 @@ function AdminHome() {
             {isLoading && <Loading />}
             {error && <Error message={error} />}
 
-            <ProtectedComponent users={['admin']}>
+            <ProtectedComponent users={['admin', 'accounts_manager']}>
                 <AddUser />
                 <div className='form-container'>
                     <Table tableData={userDetails} title={'User Details'} onRowClick={handleUserTableClick}/>

@@ -1,5 +1,5 @@
 const { response } = require("express");
-const { camps } = require("../utils/connectCAMPS");
+const { camps, transport } = require("../utils/connectCAMPS");
 
 class StudentRegController {
     getSubmittedApplication = async (req, res) => {
@@ -830,23 +830,42 @@ class StudentRegController {
             req.body.partial_payment_date ? req.body.partial_payment_date = new Date(req.body.partial_payment_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.partial_payment_date = null;
 
             if (req.body.boarding_point) {
-                const boardingPointResults = await camps.query(
+                const boardingPointResults = await transport.query(
                     `SELECT 
                         bpm.boarding_point_id,
                         rbm.route_id
                     FROM 
-                        Transport.tr_boarding_point_master AS bpm
+                        tr_boardingpoint_master AS bpm
                     JOIN 
                         Transport.tr_rt_br_mapping AS rbm 
                         ON bpm.boarding_point_id = rbm.boarding_point_id
                     WHERE 
-                        bpm.boarding_point = '${req.body.boarding_point}';
+                        bpm.boarding_point = '${req.body.boarding_point}' AND bpm.status = 1;
                     `
                 );
                 req.body.bus_boarding_point = boardingPointResults[0][0]?.boarding_point_id || null;
                 req.body.bus_route = boardingPointResults[0][0]?.route_id || null;
                 delete req.body.boarding_point;
+                
             }
+            if (req.body.bus_boarding_point) {
+                const boardingPointResults = await transport.query(
+                    `SELECT 
+                        bpm.boarding_point_id,
+                        rbm.route_id
+                    FROM 
+                        tr_boardingpoint_master AS bpm
+                    JOIN 
+                        Transport.tr_rt_br_mapping AS rbm 
+                        ON bpm.boarding_point_id = rbm.boarding_point_id
+                    WHERE 
+                        bpm.boarding_point_id = '${req.body.bus_boarding_point}' AND bpm.status = 1;
+                    `
+                );
+                req.body.bus_boarding_point = boardingPointResults[0][0]?.boarding_point_id || null;
+                req.body.bus_route = boardingPointResults[0][0]?.route_id || null;
+            }
+            
 
             // Remove fields that shouldn't be updated
             const { inserted_at, inserted_by, ...updateData } = req.body;
@@ -926,9 +945,8 @@ class StudentRegController {
             }
 
             const response = {
-                total_fee: total_fee + bus_fee - first_graduate,
-                college_fee: college_fee + first_graduate,
-                hostel_lunch: hostel_lunch,
+                to_be_paid: total_fee + bus_fee - first_graduate,
+                total_fee: total_fee,
             };
             if (bus_fee !== 0) {
                 response.bus_fee = bus_fee;

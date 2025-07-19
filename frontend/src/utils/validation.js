@@ -35,7 +35,7 @@ const PersonalDetails = Yup.object().shape({
 
     seat_cat: Yup.string()
         .required("Seat Category is required"),
-        
+
     scholar: Yup.string()
         .required("Scholar is required"),
 })
@@ -680,6 +680,7 @@ const PaymentDetails = Yup.object().shape({
             then: (schema) => schema
                 .required("DD amount is required when Demand Draft is selected")
                 .positive("DD amount must be positive")
+                .min(0.01, "DD amount must be at least 0.01")
                 .typeError("DD amount must be a valid number"),
             otherwise: (schema) => schema.nullable(true)
         }),
@@ -689,7 +690,8 @@ const PaymentDetails = Yup.object().shape({
         .nullable(true)
         .when('fee_payment_option', {
             is: (methods) => methods && methods.includes('demand draft'),
-            then: (schema) => schema.required("Bank name is required when Demand Draft is selected"),
+            then: (schema) => schema
+                .required("Bank name is required when Demand Draft is selected"),
             otherwise: (schema) => schema.nullable(true)
         }),
 
@@ -711,7 +713,7 @@ const PaymentDetails = Yup.object().shape({
             is: (methods) => methods && methods.includes('demand draft'),
             then: (schema) => schema
                 .required("DD number is required when Demand Draft is selected")
-                .matches(/^[0-9]{6}$/, "DD number must be exactly 6 digits"),
+                .matches(/^[0-9]{6}$/, "DD number must be 6 digits"),
             otherwise: (schema) => schema.nullable(true)
         }),
 
@@ -724,6 +726,7 @@ const PaymentDetails = Yup.object().shape({
             then: (schema) => schema
                 .required("Card swipe amount is required when Card Swiping is selected")
                 .positive("Card swipe amount must be positive")
+                .min(0.01, "Card swipe amount must be at least 0.01")
                 .typeError("Card swipe amount must be a valid number"),
             otherwise: (schema) => schema.nullable(true)
         }),
@@ -735,7 +738,7 @@ const PaymentDetails = Yup.object().shape({
             is: (methods) => methods && methods.includes('card swiping'),
             then: (schema) => schema
                 .required("Card reference number is required when Card Swiping is selected")
-                .matches(/^[A-Za-z0-9]+$/, "Card reference number should contain only letters and numbers"),
+                .matches(/^[A-Za-z0-9-]+$/, "Card reference number should contain only letters, numbers, and hyphens"),
             otherwise: (schema) => schema.nullable(true)
         }),
 
@@ -748,6 +751,7 @@ const PaymentDetails = Yup.object().shape({
             then: (schema) => schema
                 .required("Online payment amount is required when Online Payment is selected")
                 .positive("Online payment amount must be positive")
+                .min(0.01, "Online payment amount must be at least 0.01")
                 .typeError("Online payment amount must be a valid number"),
             otherwise: (schema) => schema.nullable(true)
         }),
@@ -759,7 +763,7 @@ const PaymentDetails = Yup.object().shape({
             is: (methods) => methods && methods.includes('online payment'),
             then: (schema) => schema
                 .required("Online reference number is required when Online Payment is selected")
-                .matches(/^[A-Za-z0-9]+$/, "Online reference number should contain only letters and numbers"),
+                .matches(/^[A-Za-z0-9-]+$/, "Card reference number should contain only letters, numbers, and hyphens"),
             otherwise: (schema) => schema.nullable(true)
         }),
 
@@ -780,30 +784,84 @@ const PaymentDetails = Yup.object().shape({
             otherwise: (schema) => schema.nullable(true)
         }),
 
-    // Custom validation to ensure total amount is sufficient (unless partial payment is allowed or no fees selected)
-}).test('sufficient-payment', 'Total payment amount is insufficient', function(values) {
+    // Student details validations (read-only fields should still have basic validation)
+    student_name: Yup.string()
+        .nullable(true)
+        .min(2, "Student name must be at least 2 characters"),
+
+    mobile_number: Yup.string()
+        .nullable(true)
+        .matches(/^[6-9]\d{9}$/, "Mobile number must be a valid 10-digit Indian mobile number"),
+
+    first_graduate: Yup.string()
+        .nullable(true)
+        .oneOf(['yes', 'no', 'Yes', 'No', null], "First graduate must be Yes or No"),
+
+    bus_route: Yup.string()
+        .nullable(true),
+
+    bus_boarding_point: Yup.string()
+        .nullable(true),
+
+}).test('payment-method-consistency', 'Payment method validation failed', function (values) {
+    const { fee_payment_option } = values;
+
+    // Ensure no conflicting payment methods
+    if (fee_payment_option && fee_payment_option.includes('no fees') && fee_payment_option.length > 1) {
+        return this.createError({
+            path: 'fee_payment_option',
+            message: 'No fees option cannot be selected with other payment methods'
+        });
+    }
+
+    return true;
+}).test('minimum-payment-validation', 'Payment validation failed', function (values) {
     const { fee_payment_option, dd_amount, card_swipe_amount, online_pay_amount, tfc_initial_payment, partial_payment } = values;
-    
+
     // Skip validation if no fees is selected
     if (fee_payment_option && fee_payment_option.includes('no fees')) {
         return true;
     }
-    
+
     // Skip validation if partial payment is allowed
     if (partial_payment === 'yes') {
         return true;
     }
-    
+
     // Calculate total amount
-    const totalAmount = 
+    const totalAmount =
         (parseFloat(dd_amount) || 0) +
         (parseFloat(card_swipe_amount) || 0) +
         (parseFloat(online_pay_amount) || 0) +
         (parseFloat(tfc_initial_payment) || 0);
-    
-    // Note: You would need to pass feesToPay value to validation context
-    // This is a simplified version - you might need to adjust based on your setup
-    return totalAmount > 0;
+
+    // Ensure some payment is made if payment methods are selected (excluding no fees)
+    if (fee_payment_option && fee_payment_option.length > 0 && !fee_payment_option.includes('no fees') && totalAmount <= 0) {
+        return this.createError({
+            path: 'fee_payment_option',
+            message: 'Total payment amount must be greater than 0 when payment methods are selected'
+        });
+    }
+
+    return true;
+}).test('duplicate-reference-check', 'Reference number validation failed', function (values) {
+    const { card_swipe_reference_no, online_pay_reference_no, fee_payment_option } = values;
+
+    // Check if both card and online payment are selected and have same reference number
+    if (fee_payment_option &&
+        fee_payment_option.includes('card swiping') &&
+        fee_payment_option.includes('online payment') &&
+        card_swipe_reference_no &&
+        online_pay_reference_no &&
+        card_swipe_reference_no.toLowerCase() === online_pay_reference_no.toLowerCase()) {
+
+        return this.createError({
+            path: 'online_pay_reference_no',
+            message: 'Online payment reference number cannot be the same as card swipe reference number'
+        });
+    }
+
+    return true;
 });
 
 const schema = {

@@ -1,8 +1,8 @@
 import '../css/InputField.css';
 
-function InputField({ label, registerProps, type, error, readOnly, placeholder, required}) {
+function InputField({ label, registerProps, type, error, readOnly, placeholder, required, toUpperCase = true }) {
     const handleInput = (e) => {
-        if(type !== 'email'){
+        if(type !== 'email' && type !== 'number' && toUpperCase) {
             e.target.value = e.target.value.toUpperCase()
         }
     }

@@ -24,4 +24,15 @@ const userTableConfig = {
 
 const userTable = mysql.createPool(userTableConfig);
 
-module.exports = {camps, userTable};
+const transportTableConfig = {
+  host: configs.CAMPS.HOST,
+  port: configs.CAMPS.PORT,
+  user: configs.CAMPS.USER,
+  password: configs.CAMPS.PASSWORD,
+  database: 'Transport',
+  connectionLimit: 20,
+};
+
+const transport = mysql.createPool(transportTableConfig);
+
+module.exports = {camps, userTable, transport};

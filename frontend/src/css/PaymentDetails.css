@@ -6,6 +6,12 @@
     padding: 20px;
 }
 
+/* Student Details Section */
+.student-details-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+}
+
 /* Payment Methods Section */
 .payment-methods-section {
     margin-top: 20px;
@@ -69,9 +75,15 @@
     color: #007bff;
 }
 
-/* Payment Method Sections - removed background and container styling */
+/* Payment Method Sections - with subtle separators */
 .payment-method-section {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.payment-method-section:last-of-type {
+    border-bottom: none;
 }
 
 .payment-method-section-title {
@@ -134,9 +146,66 @@
     margin: 0;
 }
 
+/* Fee Breakdown Section */
+.fee-breakdown-section {
+    margin: 20px 0;
+    padding: 0;
+}
+
+.fee-breakdown-display {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #6c757d;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+.fee-breakdown-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
+    text-align: center;
+}
+
+.fee-breakdown-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fee-breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.fee-breakdown-item:hover {
+    background-color: #f1f3f4;
+    border-color: #dee2e6;
+}
+
+.fee-label {
+    font-weight: 500;
+    color: #495057;
+    font-size: 14px;
+}
+
+.fee-amount {
+    font-weight: 600;
+    color: #007bff;
+    font-size: 14px;
+}
+
 /* Payment Summary Section */
 .payment-summary-section {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    padding: 0;
 }
 
 /* Fees to Pay Display */
@@ -148,6 +217,7 @@
     background-color: #fff;
     text-align: center;
     margin-bottom: 10px;
+    position: relative;
 }
 
 .fees-to-pay-text {
@@ -188,6 +258,59 @@
 
 .total-amount-display.insufficient .total-amount-text {
     color: #dc3545;
+}
+
+/* Enhanced insufficient amount warning */
+.insufficient-amount-warning {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 3px;
+    color: #856404;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Button Container */
+/* .button-container {
+    width: 100%;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+} */
+
+/* Save Button */
+.save-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.save-button:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.save-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.save-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
 }
 
 /* Approve Button */
@@ -246,6 +369,12 @@
         gap: 8px;
     }
 
+    .button-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .save-button,
     .approve-button {
         width: 100%;
         min-width: unset;
@@ -254,5 +383,32 @@
     .fees-to-pay-text,
     .total-amount-text {
         font-size: 14px;
+    }
+
+    /* Fee breakdown responsive improvements */
+    .fee-breakdown-display {
+        padding: 12px;
+    }
+    
+    .fee-breakdown-item {
+        padding: 6px 10px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .fee-breakdown-item .fee-amount {
+        align-self: flex-end;
+        font-size: 15px;
+        font-weight: 700;
+    }
+    
+    .fee-breakdown-title {
+        font-size: 15px;
+    }
+    
+    .fee-label,
+    .fee-amount {
+        font-size: 13px;
     }
 }
