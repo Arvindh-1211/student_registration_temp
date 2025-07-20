@@ -24,8 +24,8 @@ function IncompleteApplication() {
             setIsLoading(true)
             setError(null)
             try {
-                const paymentNotVerified = await services.getPaymentNotVerifiedApplications()
-                setPaymentNotVerifiedApplications(paymentNotVerified)
+                // const paymentNotVerified = await services.getPaymentNotVerifiedApplications()
+                // setPaymentNotVerifiedApplications(paymentNotVerified)
 
                 const inc_apl = await services.getIncompleteApplications()
                 setIncompleteApplications(inc_apl)
@@ -33,8 +33,8 @@ function IncompleteApplication() {
                 const sub_apl = await services.getSubmittedApplications()
                 setSubmittedApplications(sub_apl)
 
-                const unfreezedApplications = await services.getUnfreezedApplications()
-                setUnfreezedApplications(unfreezedApplications)
+                // const unfreezedApplications = await services.getUnfreezedApplications()
+                // setUnfreezedApplications(unfreezedApplications)
             } catch (error) {
                 setError("Failed to fetch applications!")
             } finally {
