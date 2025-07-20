@@ -28,6 +28,7 @@ function ContactDetails() {
         stu_email_id: '',
         parent_mobile_no: '',
         parent_email_id: '',
+        perm_phone_no: '',
         nominee_name: '',
         nominee_age: '',
         nominee_relation: '',
@@ -111,6 +112,16 @@ function ContactDetails() {
                         registerProps={register("parent_email_id")}
                         type='email'
                         error={errors.parent_email_id && errors.parent_email_id.message}
+                    />
+                </Row>
+
+                <Row>
+                    <InputField
+                        label="Mother's Phone Number"
+                        registerProps={register("perm_phone_no")}
+                        type='number'
+                        error={errors.perm_phone_no && errors.perm_phone_no.message}
+                        required
                     />
                 </Row>
 

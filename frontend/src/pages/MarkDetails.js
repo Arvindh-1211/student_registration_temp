@@ -420,6 +420,7 @@ function MarkDetails() {
                         fieldname={"sch_yr_pass"}
                         formcontrol={control}
                         sorted={false}
+                        required
                     />
                     <DropDown
                         label="Study state"

@@ -16,16 +16,16 @@ function Pagination() {
         '/scholarship_details',
         '/mark_details',
         '/additional_details',
-        '/payment_details',
+        // '/payment_details',
     ]
 
     if (auth?.role === 'MANAGEMENT') {
         routes.splice(routes.indexOf('/tnea_details'), 1)
     }
 
-    if(auth?.role === 'MANAGEMENT' || auth?.role === 'GOVERNMENT' ){
-        routes.splice(routes.indexOf('/payment_details'), 1)
-    }
+    // if(auth?.role === 'MANAGEMENT' || auth?.role === 'GOVERNMENT' ){
+    //     routes.splice(routes.indexOf('/payment_details'), 1)
+    // }
 
     return (
         routes.includes(location.pathname) &&

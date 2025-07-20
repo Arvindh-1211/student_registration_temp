@@ -111,12 +111,13 @@ function ParentDetails() {
                         type="text"
                         error={errors.father_name && errors.father_name.message}
                         required
-                    />
+                        />
                     <DropDown
                         label="Father's Occupation"
                         options={options['occupation']}
                         fieldname={"occupation"}
                         formcontrol={control}
+                        required
                     />
                     <InputField
                         label="Father's Income"
@@ -155,6 +156,7 @@ function ParentDetails() {
                         options={options['occupation']}
                         fieldname={"occupation_mother"}
                         formcontrol={control}
+                        required
                     />
 
                     <InputField

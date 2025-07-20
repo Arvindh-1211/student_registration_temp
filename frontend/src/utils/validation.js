@@ -57,6 +57,9 @@ const ParentDetails = Yup.object().shape({
         .matches(/^[A-Za-zÀ-ÿ]+([ '-][A-Za-zÀ-ÿ]+)*$/, "Name should contain only characters and spaces")
         .required("Father's Name is required"),
 
+    occupation: Yup.string()
+        .required("Father occupation is required"),
+
     parent_income: Yup.number()
         .min(0, "Income should be positive")
         .transform((value, originalValue) => originalValue === '' ? null : value)
@@ -69,6 +72,9 @@ const ParentDetails = Yup.object().shape({
     mother_name: Yup.string()
         .matches(/^[A-Za-zÀ-ÿ]+([ '-][A-Za-zÀ-ÿ]+)*$/, "Name should contain only characters and spaces")
         .required("Mother's Name is required"),
+
+    mother_occupation: Yup.string()
+        .required("Mother Occypation is required"),
 
     parent_income_mother: Yup.number()
         .min(0, "Income should be positive")
@@ -95,6 +101,10 @@ const ContactDetails = Yup.object().shape({
     parent_mobile_no: Yup.string()
         .length(10, "Phone Number must be 10 digits")
         .required("Parent phone number is required"),
+
+    perm_phone_no: Yup.string()
+        .length(10, "Phone Number must be 10 digits")
+        .required("Mother's phone number is required"),
 
     parent_email_id: Yup.string()
         .email("Invalid email")
@@ -256,6 +266,9 @@ const MarkDetails = Yup.object().shape({
 
     school_tc_date: Yup.string()
         .required("TC date is required"),
+
+    sch_yr_pass: Yup.string()
+        .required("Year of passing is required"),
 
     sch_attempt: Yup.number()
         .transform((value, originalValue) => originalValue === '' ? null : value)

@@ -116,13 +116,16 @@ function AdditionalDetails() {
             }
 
             if (response.status === 200) {
-                if (location.state && location.state.fromFinal) {
-                    navigate('/final_review')
-                } else if (auth?.role === 'MANAGEMENT' || auth?.role === 'GOVERNMENT') {
-                    navigate('/final_review')
-                } else {
-                    navigate('/payment_details')
-                }
+
+                navigate('/final_review')
+
+                // if (location.state && location.state.fromFinal) {
+                //     navigate('/final_review')
+                // } else if (auth?.role === 'MANAGEMENT' || auth?.role === 'GOVERNMENT') {
+                //     navigate('/final_review')
+                // } else {
+                //     navigate('/payment_details')
+                // }
             } else {
                 setError("Error submitting form!")
             }
