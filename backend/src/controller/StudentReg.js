@@ -65,7 +65,7 @@ class StudentRegController {
                     (SELECT sc.stu_cat FROM student_category sc WHERE sc.stu_cat_id=psr.student_cat_id) AS student_cat
                 FROM pre_student_register psr 
                 INNER JOIN admission_payment_details apd ON apd.pre_student_register_sno = psr.sno
-                WHERE psr.application_no IS NULL 
+                WHERE (psr.application_no = 0 OR psr.application_no IS NULL)
                     AND apd.approved_by IS NULL
                 ORDER BY psr.sno DESC
             `;
