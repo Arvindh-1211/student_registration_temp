@@ -62,7 +62,7 @@ function IncompleteApplication() {
 
 
 
-            <Table
+            {/* <Table
                 tableData={paymentNotVerifiedApplications}
                 title={'Payment Not Verified Applications'}
                 onRowClick={handlePaymentNotVerifiedApplicationClick}
@@ -74,7 +74,7 @@ function IncompleteApplication() {
                     isOpen={isEditPaymentNotVerifiedApplicationModalOpen}
                     setIsOpen={setIsEditPaymentNotVerifiedApplicationModalOpen}
                 />
-            )}
+            )} */}
 
             <Table
                 tableData={incompleteApplications}
