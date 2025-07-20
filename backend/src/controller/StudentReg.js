@@ -36,6 +36,25 @@ class StudentRegController {
         }
     }
 
+    // getIncompleteApplication = async (req, res) => {
+    //     try {
+    //         const sql = `
+    //             SELECT psr.sno, psr.student_name, psr.initial, psr.stu_mobile_no, psr.tnea_app_no, psr.scholar,
+    //                 (SELECT bm.branch_name FROM branch_master bm WHERE bm.branch_id=psr.branch_id) AS branch,
+    //                 (SELECT cm.course_code FROM course_master cm WHERE cm.course_id=psr.course_id) AS course,
+    //                 (SELECT sc.stu_cat FROM student_category sc WHERE sc.stu_cat_id=psr.student_cat_id) AS student_cat
+    //             FROM pre_student_register psr 
+    //             INNER JOIN admission_payment_details apd ON apd.pre_student_register_sno = psr.sno
+    //             WHERE (psr.application_no = 0 OR psr.application_no IS NULL)
+    //                 AND apd.approved_by IS NOT NULL
+    //             ORDER BY psr.sno DESC
+    //         `;
+    //         const result = await camps.query(sql)
+    //         res.json(result[0]);
+    //     } catch (error) {
+    //         res.status(500).send({ error: 'Error fetching incomplete applications', message: error.message });
+    //     }
+    // }
     getIncompleteApplication = async (req, res) => {
         try {
             const sql = `
@@ -44,9 +63,7 @@ class StudentRegController {
                     (SELECT cm.course_code FROM course_master cm WHERE cm.course_id=psr.course_id) AS course,
                     (SELECT sc.stu_cat FROM student_category sc WHERE sc.stu_cat_id=psr.student_cat_id) AS student_cat
                 FROM pre_student_register psr 
-                INNER JOIN admission_payment_details apd ON apd.pre_student_register_sno = psr.sno
                 WHERE (psr.application_no = 0 OR psr.application_no IS NULL)
-                    AND apd.approved_by IS NOT NULL
                 ORDER BY psr.sno DESC
             `;
             const result = await camps.query(sql)
