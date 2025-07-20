@@ -164,6 +164,7 @@ function PersonalDetails() {
                         registerProps={register("initial")}
                         type="text"
                         error={errors.initial && errors.initial.message}
+                        required
                     />
                 </Row>
 
@@ -201,13 +202,16 @@ function PersonalDetails() {
                         formcontrol={control}
                         value='value'
                         error={errors.blood_group && errors.blood_group.message}
-                    />
+                        required
+                        />
                     <DropDown
                         label="Mother Tongue"
                         options={options['mother_tongue']}
                         fieldname={"mother_tongue"}
                         formcontrol={control}
                         storeLabel={true}
+                        error={errors.mother_tongue && errors.mother_tongue.message}
+                        required
                     />
                     <InputField
                         label="Aadhar Number"
@@ -226,12 +230,14 @@ function PersonalDetails() {
                         formcontrol={control}
                         error={errors.community_id && errors.community_id.message}
                         required
-                    />
+                        />
                     <DropDown
                         label="Caste"
                         options={options['caste']}
                         fieldname={"caste_id"}
                         formcontrol={control}
+                        error={errors.caste_id && errors.caste_id.message}
+                        required
                     />
                     <DropDown
                         label="Religion"

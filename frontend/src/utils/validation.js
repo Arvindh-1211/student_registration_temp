@@ -5,6 +5,9 @@ const PersonalDetails = Yup.object().shape({
         .matches(/^[A-Za-zÀ-ÿ]+([ '-][A-Za-zÀ-ÿ]+)*$/, "Name should contain only characters and spaces")
         .required('Name is required'),
 
+    initial: Yup.string()
+        .required("Initial is required"),
+
     dob: Yup.string()
         .required("Date of birth is required"),
 
@@ -27,8 +30,17 @@ const PersonalDetails = Yup.object().shape({
         .nullable()
         .required("Community is required"),
 
+    blood_group: Yup.string()
+        .required("Blood Group is required"),
+
+    mother_tongue: Yup.string()
+        .required("Mother Tongue is required"),
+
     religion_id: Yup.string()
         .required("Religion is required"),
+
+    caste_id: Yup.string()
+        .required("Caste is required"),
 
     nationality_id: Yup.string()
         .required("Nationality is required"),
