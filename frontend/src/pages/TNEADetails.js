@@ -128,7 +128,7 @@ function TNEADetails() {
                     <InputField
                         label="TNEA Admission No."
                         registerProps={register("tnea_adm_no")}
-                        type="number"
+                        type="text"
                         error={errors.tnea_adm_no && errors.tnea_adm_no.message}
                     />
                 </Row>

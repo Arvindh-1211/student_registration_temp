@@ -172,7 +172,7 @@ const TNEADetails = Yup.object().shape({
         .transform((value, originalValue) => originalValue === '' ? null : value)
         .nullable(true),
 
-    tnea_adm_no: Yup.number("Must be a number")
+    tnea_adm_no: Yup.string()
         .transform((value, originalValue) => originalValue === '' ? null : value)
         .nullable(true),
 
