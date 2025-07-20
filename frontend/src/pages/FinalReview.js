@@ -218,26 +218,6 @@ function FinalReview() {
         choose_college: '',
     })
 
-    const [paymentData, setPaymentData] = useState({
-        token_number: null,
-        tfc_initial_payment: null,
-        // Payment method arrays to support multiple payments
-        fee_payment_option: [],
-        // Individual payment details
-        dd_amount: null,
-        dd_bank_name: null,
-        dd_date: null,
-        dd_number: null,
-        card_swipe_amount: null,
-        card_swipe_reference_no: null,
-        online_pay_amount: null,
-        online_pay_reference_no: null,
-        partial_payment: null,
-        partial_payment_date: null,
-        total_amount: null,
-        approved_by: null
-    });
-
     useEffect(() => {
         let fetchedData
         const getDefaultValues = async () => {
@@ -268,60 +248,6 @@ function FinalReview() {
             setAdditionalDet(response)
         }
 
-        const getPaymentDetails = async () => {
-            try {
-                const queryParams = Object.keys(paymentData).join(",");
-                const fetchedData = await services.getPaymentDetails(
-                    applicationNo,
-                    queryParams
-                );
-
-                // Add null check for fetchedData
-                if (!fetchedData) {
-                    console.warn(
-                        "No payment details found for application:",
-                        applicationNo
-                    );
-                    return;
-                }
-
-                // Convert SET field from database to array for multi-select
-                if (fetchedData.fee_payment_option) {
-                    const paymentMethodsArray = fetchedData.fee_payment_option
-                        .split(",")
-                        .map((method) => method.trim());
-                    fetchedData.fee_payment_option = paymentMethodsArray;
-                }
-
-                if (fetchedData.dd_date) {
-                    let ddDate = new Date(fetchedData.dd_date)
-                        .toLocaleDateString("ja-JP", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                        })
-                        .replace(/\//g, "-");
-                    fetchedData.dd_date = ddDate;
-                }
-
-                if (fetchedData.partial_payment_date) {
-                    let partialPaymentDate = new Date(fetchedData.partial_payment_date)
-                        .toLocaleDateString("ja-JP", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                        })
-                        .replace(/\//g, "-");
-                    fetchedData.partial_payment_date = partialPaymentDate;
-                }
-
-
-                setPaymentData(fetchedData);
-            } catch (error) {
-                console.error("Error fetching payment details:", error);
-                setError("Error fetching payment details!");
-            }
-        };
 
         const getValue = async () => {
             if (fetchedData.blood_group) {
@@ -471,7 +397,6 @@ function FinalReview() {
             await getDefaultValues()
             await getValue()
             await getAdditionalDet()
-            await getPaymentDetails()
             setIsLoading(false)
         };
 
@@ -487,15 +412,6 @@ function FinalReview() {
         setError(null)
 
         try {
-
-            // Check if admin or manager has enetered token_number, payment_method in payment details
-            if (auth && ['admin', 'manager', 'accounts_manager'].includes(auth.role)) {
-                if (!paymentData.approved_by) {
-                    setError("Payment not yet verified!")
-                    setIsLoading(false)
-                    return;
-                }
-            }
             const response = await services.inserIntoCAMPS(applicationNo)
             dispatch(setCampsApplNo(response.APPLICATION_NO));
             navigate('/success')
@@ -795,99 +711,29 @@ function FinalReview() {
                 </div>
             </div>
 
+
             <ProtectedComponent users={['admin', 'manager', 'accounts_manager']}>
-
-                <div className='details-card'>
-                    <div className="detail-header">
-                        <div>PAYMENT DETAILS</div>
-                        <div><input className='button' type='button' value="Edit" onClick={() => { navigate('/payment_details', { state: { fromFinal: true } }) }} /></div>
-                    </div>
-                    <hr className='detail-header-line'></hr>
-                    <div className='details-container'>
-                        <div className='detail-row'>
-                            <ProtectedComponent users={['admin', 'manager', 'accounts_manager']}>
-                                <Detail label="Token Number" value={paymentData.token_number} />
-                            </ProtectedComponent>
-                            <Detail label="TFC Initial Payment" value={paymentData.tfc_initial_payment} />
-
-                            {/* Display Payment Methods */}
-                            <Detail
-                                label="Payment Methods"
-                                value={paymentData.fee_payment_option && paymentData.fee_payment_option.length > 0
-                                    ? paymentData.fee_payment_option.join(', ').replace(/,/g, ', ').replace(/\b\w/g, l => l.toUpperCase())
-                                    : 'Not selected'
-                                }
-                            />
-
-                            {/* Demand Draft Details */}
-                            {paymentData.fee_payment_option?.includes('demand draft') && (
-                                <>
-                                    <Detail label="DD Amount" value={paymentData.dd_amount ? `₹${parseFloat(paymentData.dd_amount).toFixed(2)}` : null} />
-                                    <Detail label="DD Bank Name" value={paymentData.dd_bank_name} />
-                                    <Detail label="DD Date" value={paymentData.dd_date} />
-                                    <Detail label="DD Number" value={paymentData.dd_number} />
-                                </>
-                            )}
-
-                            {/* Card Swiping Details */}
-                            {paymentData.fee_payment_option?.includes('card swiping') && (
-                                <>
-                                    <Detail label="Card Swipe Amount" value={paymentData.card_swipe_amount ? `₹${parseFloat(paymentData.card_swipe_amount).toFixed(2)}` : null} />
-                                    <Detail label="Card Reference Number" value={paymentData.card_swipe_reference_no} />
-                                </>
-                            )}
-
-                            {/* Online Payment Details */}
-                            {paymentData.fee_payment_option?.includes('online payment') && (
-                                <>
-                                    <Detail label="Online Payment Amount" value={paymentData.online_pay_amount ? `₹${parseFloat(paymentData.online_pay_amount).toFixed(2)}` : null} />
-                                    <Detail label="Online Reference Number" value={paymentData.online_pay_reference_no} />
-                                </>
-                            )}
-
-                            {/* Partial Payment Details - Only for accounts_manager */}
-                            <Detail label="Partial Payment Allowed" value={paymentData.partial_payment ? 'Yes' : 'No'} />
-                            {paymentData.partial_payment && paymentData.partial_payment_date && (
-                                <Detail label="Partial Payment Date" value={paymentData.partial_payment_date} />
-                            )}
-
-                            {/* Fee Exemption Message */}
-                            {paymentData.fee_payment_option?.includes('no fees') && (
-                                <Detail label="Fee Status" value="Fee Exemption Applied - No Payment Required" />
-                            )}
-
-                            {/* Total Amount Calculation */}
-                            {paymentData.fee_payment_option && paymentData.fee_payment_option.length > 0 && !paymentData.fee_payment_option.includes('no fees') && (
-                                <Detail
-                                    label="Total Payment Amount"
-                                    value={`₹${paymentData.total_amount}`}
-                                />
-                            )}
-                        </div>
-                    </div>
-                </div>
-
                 <div>
                     <input className='submit-btn' type='submit' value="Submit" onClick={handleSubmit} />
                 </div>
-                
+
             </ProtectedComponent>
             <ProtectedComponent users={['GOVERNMENT', 'MANAGEMENT']}>
                 <div>
-                    <input className='submit-btn' type='button' value="Freeze" onClick={ async () => {
-                                setIsLoading(true)
-                                setError(null)
-                                try{
+                    <input className='submit-btn' type='button' value="Freeze" onClick={async () => {
+                        setIsLoading(true)
+                        setError(null)
+                        try {
 
-                                    await services.freezeApplication(applicationNo)
-                                    navigate('/success') 
-                                    setIsLoading(false)
-                                }
-                                catch (error) {
-                                    setIsLoading(false)
-                                    setError("Error freezing application!")
-                                }
-                         }} />
+                            await services.freezeApplication(applicationNo)
+                            navigate('/success')
+                            setIsLoading(false)
+                        }
+                        catch (error) {
+                            setIsLoading(false)
+                            setError("Error freezing application!")
+                        }
+                    }} />
                 </div>
             </ProtectedComponent>
         </div>

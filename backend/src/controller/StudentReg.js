@@ -826,8 +826,13 @@ class StudentRegController {
             req.body.modified_by = req.user.user_id;
             req.body.modified_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-            req.body.dd_date ? req.body.dd_date = new Date(req.body.dd_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.dd_date = null;
-            req.body.partial_payment_date ? req.body.partial_payment_date = new Date(req.body.partial_payment_date).toISOString().slice(0, 19).replace('T', ' ') : req.body.partial_payment_date = null;
+            req.body.dd_date
+            ? req.body.dd_date = new Date(new Date(req.body.dd_date).getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
+            : req.body.dd_date = null;
+
+            req.body.partial_payment_date
+            ? req.body.partial_payment_date = new Date(new Date(req.body.partial_payment_date).getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
+            : req.body.partial_payment_date = null;
 
             if (req.body.boarding_point) {
                 const boardingPointResults = await transport.query(
