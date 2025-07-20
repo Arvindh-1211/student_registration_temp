@@ -117,6 +117,7 @@ function ParentDetails() {
                         options={options['occupation']}
                         fieldname={"occupation"}
                         formcontrol={control}
+                        error={errors.occupation && errors.occupation.message}
                         required
                     />
                     <InputField
@@ -156,6 +157,7 @@ function ParentDetails() {
                         options={options['occupation']}
                         fieldname={"occupation_mother"}
                         formcontrol={control}
+                        error={errors.occupation_mother && errors.occupation_mother.message}
                         required
                     />
 
