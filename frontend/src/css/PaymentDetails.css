@@ -412,3 +412,101 @@
         font-size: 13px;
     }
 }
+
+/* Bus Confirmation Styles */
+.bus-confirmation {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.bus-confirmation label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.2s ease;
+    min-height: 44px;
+}
+
+.bus-confirmation input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #007bff;
+    margin: 0;
+}
+
+.bus-confirmation input[type="checkbox"]:checked + span,
+.bus-confirmation label:has(input[type="checkbox"]:checked) {
+    color: #007bff;
+    border-color: #007bff;
+    background-color: #f8f9ff;
+}
+
+/* Alternative style if you want it to match the payment method selection exactly */
+.bus-confirmation-alt {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.bus-confirmation-alt-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.bus-confirmation-alt-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    min-height: 44px;
+}
+
+.bus-confirmation-alt input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #007bff;
+}
+
+.bus-confirmation-alt-text {
+    font-size: 14px;
+    color: #333;
+    user-select: none;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .bus-confirmation label {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .bus-confirmation input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .bus-confirmation-alt-container {
+        padding: 10px;
+    }
+    
+    .bus-confirmation-alt-text {
+        font-size: 13px;
+    }
+}
