@@ -615,7 +615,7 @@ function FinalReview() {
                         <div className='details-sub-header'>Marksheet Details</div>
                         <div></div>
                         <Detail label="Register Number 1" value={formData.sch_reg1} />
-                        <Detail label="Register Number 2" value={formData.sch_reg2} />
+                        <Detail label="EMIS ID" value={formData.sch_reg2} />
                         <Detail label="Certificate Number" value={formData.sch_cer1} />
                         <Detail label="Certificate Number" value={formData.sch_cer2} />
                         <Detail label="Total Marks" value={formData.sch_tot_mark1} />

@@ -480,7 +480,7 @@ function MarkDetails() {
                 </Row>
                 <Row>
                     <InputField
-                        label='Register Number 2'
+                        label='EMIS ID'
                         registerProps={register("sch_reg2")}
                         type='text'
                         error={errors.sch_reg2 && errors.sch_reg2.message}
