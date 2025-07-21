@@ -86,7 +86,7 @@ const ParentDetails = Yup.object().shape({
         .nullable(true),
 
     gaurdian_name: Yup.string()
-        .matches(/^[A-Za-zÀ-ÿ]+([ '-][A-Za-zÀ-ÿ]+)*$/, "Name should contain only characters and spaces"),
+        .matches(/^[A-Za-zÀ-ÿ]+([ '-][A-Za-zÀ-ÿ]+)*$/, "Name should contain only characters and spaces")
 })
 
 const ContactDetails = Yup.object().shape({

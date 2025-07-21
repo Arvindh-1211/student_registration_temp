@@ -104,6 +104,7 @@ function FinalReview() {
         stu_email_id: '',
         parent_mobile_no: '',
         parent_email_id: '',
+        perm_phone_no: '',
         nominee_relation: '',
         nominee_name: '',
         nominee_age: '',
@@ -535,6 +536,8 @@ function FinalReview() {
                         <Detail label="Student's Email ID" value={formData.stu_email_id} />
                         <Detail label="Parent's Phone Number" value={formData.parent_mobile_no} />
                         <Detail label="Parent's Email ID" value={formData.parent_email_id} />
+                        <Detail label="Mother Phone Number" value={formData.perm_phone_no} />
+                        <div></div>
                         <Detail label="Nominee's Relation" value={formData.nominee_relation} />
                         <Detail label="Nominee's Name" value={formData.nominee_name} />
                         <Detail label="Nominee's Age" value={formData.nominee_age} />
