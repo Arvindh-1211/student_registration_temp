@@ -106,6 +106,21 @@ class MasterTableController {
             } finally {
                 return
             }
+        } else if(req.params.option == 'school_name'){
+            try {    
+                const sql = `SELECT school_id, concat(school_name,',',school_location)school_name FROM student_entry_schoolname`
+                const results = await camps.query(sql)
+                
+                const response = results[0].reduce((acc, item) => {
+                    acc[item['school_id']] = item['school_name'];
+                    return acc;
+                }, {});
+                res.json(response);
+            } catch (error) {
+                res.status(500).send({ error: `Error fetching ${req.params.option} from CAMPS`, message: error });
+            } finally {
+                return
+            }
         }
 
         try {

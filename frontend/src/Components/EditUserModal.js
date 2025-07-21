@@ -77,7 +77,7 @@ function EditUserModal({ userData, isOpen, setIsOpen }) {
           <InputField
             label='Email'
             registerProps={register("email")}
-            type='text'
+            type='email'
           />
           <DropDown
             label="Role"

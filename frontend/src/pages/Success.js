@@ -17,7 +17,12 @@ function Success() {
     }, [])
 
     const handleClick = () => {
-        navigate('/login')
+        if(['admin', 'manager', 'accounts_manager'].includes(auth.role)){
+            navigate('/incomplete_application')
+        }
+        else {
+            navigate('/login')
+        }
     }
 
     return (

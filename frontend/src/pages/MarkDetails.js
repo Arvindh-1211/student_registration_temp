@@ -126,7 +126,7 @@ function MarkDetails() {
     })
 
     const [options, setOptions] = useState({
-        'district': {},
+        'school_name' :{},
         'school_board': {},
         'sch_qual_id': {},
         'sch_yr_pass': {},
@@ -149,11 +149,6 @@ function MarkDetails() {
             if (getValues('school_tc_date')) {
                 let school_tc_date = new Date(getValues('school_tc_date')).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')
                 setValue('school_tc_date', school_tc_date)
-            }
-            if(getValues('school_name')){
-                let [school_name, school_district] = getValues('school_name').split(', ');
-                setValue('school_name', school_name);
-                setValue('school_district', school_district || '');
             }
         }
 
@@ -186,6 +181,20 @@ function MarkDetails() {
             navigate('/login')
         }
     }, [])
+
+    const schoolQualification = watch('sch_qual_id')
+
+    useEffect(() => {
+
+        const updateSchoolClass = async () => {  
+            if(schoolQualification){
+                const schoolClass = await services.getValueFromMaster('sch_qual_id', schoolQualification)
+                setValue('school_class', schoolClass)
+            } 
+        }
+
+        updateSchoolClass()
+    }, [schoolQualification])
 
     const calculatePercentage = (sec, max) => {
         return (sec && max) ? ((sec / max) * 100).toFixed(2) : 0
@@ -337,12 +346,6 @@ function MarkDetails() {
     const onSubmit = async (data) => {
         setIsLoading(true)
         setError(null)
-        // Append school_district with school_name and remove school_district from data
-        if (data.school_district) {
-            data.school_name = `${data.school_name}, ${data.school_district}`;
-            delete data.school_district;
-        }
-
 
         const response = await services.updateData(applicationNo, data)
 
@@ -365,22 +368,20 @@ function MarkDetails() {
             {error && <Error message={error} />}
             <Form handleNext={handleSubmit(onSubmit)} heading="Mark Details" handleBack={() => { navigate('/scholarship_details') }} >
                 <Row>
-                    <InputField
+                    {/* <InputField
                         label='School Name'
                         registerProps={register("school_name")}
                         type='text'
                         error={errors.school_name && errors.school_name.message}
                         required
-                    />
-                    {/* school_district is not a valid field in student_register table. Append this field with school_name with ',' */}
+                    /> */}
                     <DropDown
-                        label="School District"
-                        options={options['district']}
-                        fieldname={"school_district"}
+                        label="School Name"
+                        options={options['school_name']}
+                        fieldname={"school_name"}
                         formcontrol={control}
                         storeLabel={true}
-                        error={errors.school_district && errors.school_district.message}
-                        required
+                    // sorted={false}
                     />
                     <DropDown
                         label="School Board"
@@ -389,6 +390,13 @@ function MarkDetails() {
                         formcontrol={control}
                         storeLabel={true}
                     // sorted={false}
+                    />
+                    <DropDown
+                        label="Qualification"
+                        options={options['sch_qual_id']}
+                        fieldname={"sch_qual_id"}
+                        formcontrol={control}
+                        sorted={false}
                     />
                 </Row>
                 <Row>
@@ -410,6 +418,7 @@ function MarkDetails() {
                         label='School class'
                         registerProps={register("school_class")}
                         type='text'
+                        readOnly={true}
                         error={errors.school_class && errors.school_class.message}
                     />
                 </Row>
@@ -444,13 +453,6 @@ function MarkDetails() {
                         type='number'
                         error={errors.sch_attempt && errors.sch_attempt.message}
                         required
-                    />
-                    <DropDown
-                        label="Qualification"
-                        options={options['sch_qual_id']}
-                        fieldname={"sch_qual_id"}
-                        formcontrol={control}
-                        sorted={false}
                     />
                 </Row>
 

@@ -162,6 +162,7 @@ function AdditionalDetails() {
                         options={{ "Government": "Government", "Private": "Private", "Government Aided": "Government Aided" }}
                         fieldname={"school_type"}
                         formcontrol={control}
+                        error={errors.school_type && errors.school_type.message}
                         required
                     />
                 </Row>
@@ -208,6 +209,7 @@ function AdditionalDetails() {
                         fieldname={"choose_college"}
                         formcontrol={control}
                         sorted={false}
+                        error={errors.choose_college && errors.choose_college.message}
                     />
                 </Row>
             </Form>

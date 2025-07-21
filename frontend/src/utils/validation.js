@@ -249,13 +249,6 @@ const AdditionalDetails = Yup.object().shape({
 
 
 const MarkDetails = Yup.object().shape({
-    school_name: Yup.string()
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .required("School name is reuquired"),
-
-    school_district: Yup.string()
-        .required("District is required"),
-
     school_tc_no: Yup.string()
         .matches(/^[A-Za-z0-9-]+$/, "Invalid TC number")
         .transform((value, originalValue) => originalValue === '' ? null : value)
@@ -298,347 +291,684 @@ const MarkDetails = Yup.object().shape({
     physics_secured: Yup.number()
         .min(0, "Mark cannot be negative")
         .max(200, "The mark is larger than the accepted standards")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     physics_max: Yup.number()
         .min(0, "Mark cannot be negative")
         .max(200, "The mark is larger than the accepted standards")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     physics_percentage: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     chemistry_secured: Yup.number()
         .min(0, "Mark cannot be negative")
         .max(200, "The mark is larger than the accepted standards")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     chemistry_max: Yup.number()
         .min(0, "Mark cannot be negative")
         .max(200, "The mark is larger than the accepted standards")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     chemistry_percentage: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     maths_secured: Yup.number()
         .min(0, "Mark cannot be negative")
         .max(200, "The mark is larger than the accepted standards")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     maths_max: Yup.number()
         .min(0, "Mark cannot be negative")
         .max(200, "The mark is larger than the accepted standards")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     maths_percentage: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     biology_secured: Yup.number()
         .min(0, "Mark cannot be negative")
         .max(200, "The mark is larger than the accepted standards")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     biology_max: Yup.number()
         .min(0, "Mark cannot be negative")
         .max(200, "The mark is larger than the accepted standards")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     biology_percentage: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     cs_secured: Yup.number()
         .min(0, "Mark cannot be negative")
         .max(200, "The mark is larger than the accepted standards")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     cs_max: Yup.number()
         .min(0, "Mark cannot be negative")
         .max(200, "The mark is larger than the accepted standards")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     cs_percentage: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     pcm_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     pcm_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     pcm_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     phy_che: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     maths: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     cut_off: Yup.number()
-        .min(0, "Cutoff cannot be negative")
-        .max(200, "Cutoff must be less than 200")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .min(0, "Mark cannot be negative")
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_first_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_first_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_first_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_second_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_second_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_second_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_third_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_third_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_third_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_fourth_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_fourth_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_fourth_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_fifth_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_fifth_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_fifth_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_sixth_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_sixth_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_sixth_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_seventh_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_seventh_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_seventh_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_eighth_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_eighth_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_eighth_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
-    diploma_nineth_sec: Yup.number()
+    diploma_ninenth_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
-    diploma_nineth_max: Yup.number()
+    diploma_ninenth_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
-    diploma_nineth_per: Yup.number()
+    diploma_ninenth_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_tenth_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_tenth_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     diploma_tenth_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     ug_mark_sec: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     ug_mark_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     ug_mark_per: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     I_II: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     III_IV: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     V_VI: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     VII_VIII: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     IX_X: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     entrance_secured: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     entrance_max: Yup.number()
         .min(0, "Mark cannot be negative")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .max(200, "The mark is larger than the accepted standards")
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 
     entrance_percenteage: Yup.number()
         .min(0, "Percentage cannot be negative")
         .max(100, "Percentage cannot be more than 100")
-        .transform((value, originalValue) => originalValue === '' ? null : value)
-        .nullable(true),
+        .transform((value, originalValue) => {
+            if (originalValue === '' || originalValue === null || originalValue === undefined) {
+                return 0;
+            }
+            return value;
+        })
+        .default(0),
 })
 
 const AddStudent = Yup.object().shape({
