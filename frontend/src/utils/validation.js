@@ -73,8 +73,8 @@ const ParentDetails = Yup.object().shape({
         .matches(/^[A-Za-zÀ-ÿ]+([ '-][A-Za-zÀ-ÿ]+)*$/, "Name should contain only characters and spaces")
         .required("Mother's Name is required"),
 
-    mother_occupation: Yup.string()
-        .required("Mother Occypation is required"),
+    occupation_mother: Yup.string()
+        .required("Mother Occupation is required"),
 
     parent_income_mother: Yup.number()
         .min(0, "Income should be positive")
@@ -84,9 +84,6 @@ const ParentDetails = Yup.object().shape({
     work_area_mother: Yup.string()
         .transform((value, originalValue) => originalValue === '' ? null : value)
         .nullable(true),
-
-    gaurdian_name: Yup.string()
-        .matches(/^[A-Za-zÀ-ÿ]+([ '-][A-Za-zÀ-ÿ]+)*$/, "Name should contain only characters and spaces")
 })
 
 const ContactDetails = Yup.object().shape({
