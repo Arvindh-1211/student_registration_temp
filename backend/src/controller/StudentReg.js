@@ -596,33 +596,33 @@ class StudentRegController {
         result = result[0][0];
 
         // Insert values into admission_payment_details table
-        if (!userAlreadyExists) {
+        // if (!userAlreadyExists) {
 
-            const admissionPaymentFields = {
-                pre_student_register_sno: result.sno,
-                seat_category: result.seat_cat,
-                application_id: (result.tnea_app_no || '').replace(/\D/g, ''),
-                year: result.year_of_study,
-                branch_id: result.branch_id,
-                course_id: result.course_id,
-                student_name: result.student_name + ' ' + result.initial,
-                mobile_number: result.stu_mobile_no,
-                first_graduate: result.adm_sch_name1 === "FIRST GRADUATE." ? 'yes' : 'no',
-                inserted_by: result.tnea_app_no,
-                inserted_at: new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
-            }
+        //     const admissionPaymentFields = {
+        //         pre_student_register_sno: result.sno,
+        //         seat_category: result.seat_cat,
+        //         application_id: (result.tnea_app_no || '').replace(/\D/g, ''),
+        //         year: result.year_of_study,
+        //         branch_id: result.branch_id,
+        //         course_id: result.course_id,
+        //         student_name: result.student_name + ' ' + result.initial,
+        //         mobile_number: result.stu_mobile_no,
+        //         first_graduate: result.adm_sch_name1 === "FIRST GRADUATE." ? 'yes' : 'no',
+        //         inserted_by: result.tnea_app_no,
+        //         inserted_at: new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000)).toISOString().slice(0, 19).replace('T', ' ')
+        //     }
 
-            try {
-                const admissionPaymentSql = `
-                        INSERT INTO admission_payment_details (${Object.keys(admissionPaymentFields).join(', ')})
-                        VALUES('${Object.values(admissionPaymentFields).join("', '")}')
-                    `
-                await camps.query(admissionPaymentSql);
-            } catch (error) {
-                console.error(`Error inserting admission payment details: ${error}`);
-                return res.status(500).json({ error: "Unable to insert admission payment details" });
-            }
-        }
+        //     try {
+        //         const admissionPaymentSql = `
+        //                 INSERT INTO admission_payment_details (${Object.keys(admissionPaymentFields).join(', ')})
+        //                 VALUES('${Object.values(admissionPaymentFields).join("', '")}')
+        //             `
+        //         await camps.query(admissionPaymentSql);
+        //     } catch (error) {
+        //         console.error(`Error inserting admission payment details: ${error}`);
+        //         return res.status(500).json({ error: "Unable to insert admission payment details" });
+        //     }
+        // }
 
         // User details from pre_student_register
         const user = result;

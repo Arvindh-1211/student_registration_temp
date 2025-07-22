@@ -391,6 +391,13 @@ function FinalReview() {
                 }
                 setFormData((prevFormData) => ({ ...prevFormData, sch_qual_id: sch_qual_id }))
             }
+            if (fetchedData.sch_yr_pass) {
+                const sch_qual_id = await services.getValueFromMaster('sch_yr_pass', fetchedData.sch_yr_pass)
+                if (!sch_yr_pass) {
+                    setError("Error fetching some values!")
+                }
+                setFormData((prevFormData) => ({ ...prevFormData, sch_yr_pass: sch_yr_pass }))
+            }
         }
 
         const init = async () => {

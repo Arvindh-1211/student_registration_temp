@@ -116,15 +116,15 @@ function PersonalDetails() {
 
         const response = await services.updateData(applicationNo, data)
 
-        if (data.scholar) {
-            try {
-                await services.updatePaymentDetails(applicationNo, { scholar: data.scholar })
-            } catch (error) {
-                setError("Error updating scholar in payment details!")
-                setIsLoading(false)
-                return;
-            }
-        }
+        // if (data.scholar) {
+        //     try {
+        //         await services.updatePaymentDetails(applicationNo, { scholar: data.scholar })
+        //     } catch (error) {
+        //         setError("Error updating scholar in payment details!")
+        //         setIsLoading(false)
+        //         return;
+        //     }
+        // }
 
         if (response) {
             if (location.state && location.state.fromFinal) {

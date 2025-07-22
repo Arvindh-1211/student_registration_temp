@@ -104,12 +104,12 @@ function AdditionalDetails() {
                 }
                 else {
                     // Update boarding point in payment details if college_bus is "Yes"
-                    const updtePaymentDet = await services.updatePaymentDetails(applicationNo, { boarding_point: data.boarding_point });
-                    if (!updtePaymentDet?.status === 200) {
-                        setError("Error updating boarding point in payment details!")
-                        setIsLoading(false)
-                        return;
-                    }
+                    // const updtePaymentDet = await services.updatePaymentDetails(applicationNo, { boarding_point: data.boarding_point });
+                    // if (!updtePaymentDet?.status === 200) {
+                    //     setError("Error updating boarding point in payment details!")
+                    //     setIsLoading(false)
+                    //     return;
+                    // }
                 }
             } else {
                 data.boarding_point = null; // Ensure boarding_point is null if college_bus is "No"
