@@ -55,7 +55,7 @@ function NewApplicationModal({ applicationData, isOpen, setIsOpen }) {
             const response = await services.createNewApplication({ username: applicationData.application_id, password: applicationData.mobile });
             if (response?.application_no) {
                 dispatch(setApplicationNo(response.application_no));
-                navigate('/personal_details');
+                navigate('/final_review');
             }
             else if (response?.message === 'Application already submitted!') {
                 setIsLoading(false)
